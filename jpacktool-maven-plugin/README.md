@@ -25,7 +25,7 @@ Based on Apache [maven-jlink-plugin](https://github.com/apache/maven-jlink-plugi
 
 [Apache License](http://www.apache.org/licenses/LICENSE-2.0)
 
-[Maven Plugin Documentation](https://agilhard-oss.github.io/jlink-jpackager-maven-plugin/site/index.html)
+[Maven Plugin Documentation](https://agilhard-oss.github.io/jpacktool-maven-plugin/site/index.html)
 
 
 ## Introduction
@@ -59,9 +59,9 @@ from a single Maven Project within the same single Maven Project and you usually
 the goals of the plugin by using a plugin execution configuration.
 
 General usage and 
-[Usage for projects that are using update4j](https://agilhard-oss.github.io/jlink-jpackager-maven-plugin/site/usage.html#Usage_for_projects_that_are_using_update4j)
+[Usage for projects that are using update4j](https://agilhard-oss.github.io/jpacktool-maven-plugin/site/usage.html#Usage_for_projects_that_are_using_update4j)
  is described in detail on the 
-[Maven Plugin Documentations usage page](https://agilhard-oss.github.io/jlink-jpackager-maven-plugin/site/index.html)
+[Maven Plugin Documentations usage page](https://agilhard-oss.github.io/jpacktool-maven-plugin/site/index.html)
 
 
 ## Prerequisites

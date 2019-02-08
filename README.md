@@ -33,7 +33,7 @@
   by adding special features for projects using [update4j](https://github.com/update4j/update4j).
 
   Have a look at [jpacktool-maven-plugin/README.md](./jpacktool-maven-plugin/README.md)
-  or the [JPacktool Maven Plugin Documentation](https://agilhard-oss.github.io/jlink-jpackager-maven-plugin/site/index.html)
+  or the [JPacktool Maven Plugin Documentation](https://agilhard-oss.github.io/jpacktool-maven-plugin/site/index.html)
  for more information.
 
 
