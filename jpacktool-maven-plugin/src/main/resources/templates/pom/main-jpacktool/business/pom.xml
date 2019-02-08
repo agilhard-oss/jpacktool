@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+	<groupId>${projectGroupId}</groupId>
+	<artifactId>${projectArtifactId}</artifactId>
+  	<version>${projectVersion}</version>
+  </parent>
+
+  <artifactId>${projectArtifactId}-business</artifactId>
+  <name>${projectArtifactId}-business</name>
+  <description>JPacktool JLink Business: ${projectArtifactId}-business</description>
+
+  <packaging>jpacktool-business</packaging>
+
+  <dependencies>
+
+    <dependency>
+		<groupId>${projectGroupId}</groupId>
+	    <artifactId>${projectArtifactId}-bootstrap</artifactId>
+  		<version>${projectVersion}</version>
+
+      	<classifier>jpacktool_bootstrap</classifier>
+      	<type>zip</type>
+    </dependency>
+
+    <dependency>
+      <groupId>${r"${jpacktool.business.groupId}"}</groupId>
+      <artifactId>${r"${jpacktool.business.artifactId}"}</artifactId>
+      <version>${r"${jpacktool.business.version}"}</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+	<groupId>net.agilhard.maven.plugins</groupId>
+	<artifactId>jpacktool-maven-plugin</artifactId>
+        <version>${r"${jpacktool.version}"}</version>
+        <extensions>true</extensions>
+        <configuration>
+	  <verbose>true</verbose>
+	  <baseUri>${r"${jpacktool.business.baseUri}"}</baseUri>
+	  <basePath>${r"${jpacktool.business.basePath}"}</basePath>
+	  <packForBusinessApp>true</packForBusinessApp>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

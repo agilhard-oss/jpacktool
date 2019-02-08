@@ -1,0 +1,6 @@
+[submodule "update4j"]
+	path = update4j
+	url = https://github.com/update4j/update4j.git
+[submodule "jlink-jpackager-maven-plugin"]
+	path = jlink-jpackager-maven-plugin
+	url = git@github.com:agilhard-oss/jlink-jpackager-maven-plugin.git

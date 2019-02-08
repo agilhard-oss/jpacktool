@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.agilhard.maven.jpacktool</groupId>
+  <artifactId>jpacktool-parent</artifactId>
+  <name>jpacktool-parent</name>
+  <description>JPacktool Parent POM</description>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <packaging>pom</packaging>
+
+  <properties>
+    <version.orgUpdate4j.update4j>1.4.1-SNAPSHOT</version.orgUpdate4j.update4j>
+    <version.netAgiljardMavenPlugins.JlinkJpackagerMavenPlugin>1.0.0-SNAPSHOT</version.netAgiljardMavenPlugins.JlinkJpackagerMavenPlugin>
+  </properties>
+
+  <profiles>
+
+    <profile>
+      <id>prepare</id>
+      <activation>
+	<activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+	<module>jlink-jpackager-maven-plugin</module>
+	<module>update4j</module>
+      </modules>
+    </profile>
+  </profiles>
+    
+  <modules>
+    <module>jpacktool-maven-plugin</module>
+  </modules>
+  
+</project>

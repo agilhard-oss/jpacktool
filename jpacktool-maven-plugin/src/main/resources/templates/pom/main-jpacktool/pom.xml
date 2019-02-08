@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>${projectGroupId}</groupId>
+  <artifactId>${projectArtifactId}</artifactId>
+  <version>${projectVersion}</version>
+
+  <name>${projectArtifactId}</name>
+  <description>JPacktool Main: ${projectArtifactId}</description>
+
+  <packaging>pom</packaging>
+
+  <properties>
+    <jpacktool.version>${jpacktoolVersion}</jpacktool.version>
+    <jpacktool.business.groupId>${businessGroupId}</jpacktool.business.groupId>
+
+    <jpacktool.business.artifactId>${businessArtifactId}</jpacktool.business.artifactId>
+    <jpacktool.business.version>${businessVersion}</jpacktool.business.version>
+    <jpacktool.bootstrap.groupId>${bootstrapGroupId}</jpacktool.bootstrap.groupId>
+
+    <jpacktool.bootstrap.artifactId>${bootstrapArtifactId}</jpacktool.bootstrap.artifactId>
+    <jpacktool.bootstrap.version>${bootstrapVersion}</jpacktool.bootstrap.version>
+    
+<#if bootstrapBaseUri??>
+    <jpacktool.bootstrap.baseUri>${bootstrapBaseUri}</jpacktool.bootstrap.baseUri>
+</#if>
+<#if bootstrapBasePath??>
+    <jpacktool.bootstrap.basePath>${bootstrapBasePath}</jpacktool.bootstrap.basePath>
+</#if>
+
+    <jpacktool.business.baseUri>${businessBaseUri}</jpacktool.business.baseUri>
+    <jpacktool.business.basePath>${businessBasePath}</jpacktool.business.basePath>
+
+  </properties>
+
+  <modules>
+    <module>${projectArtifactId}-bootstrap</module>
+    <module>${projectArtifactId}-business</module>
+<#if packagingTool == "jpackage" >
+    <module>${projectArtifactId}-jpackage</module>
+</#if>
+<#if packagingTool == "jlink" >
+    <module>${projectArtifactId}-jlink</module>
+</#if>
+  </modules>
+  
+</project>

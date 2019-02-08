@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+	<groupId>${projectGroupId}</groupId>
+	<artifactId>${projectArtifactId}</artifactId>
+  	<version>${projectVersion}</version>
+  </parent>
+
+  <artifactId>${projectArtifactId}-bootstrap</artifactId>
+  <name>${projectArtifactId}-bootstrap</name>
+
+  <description>JPacktool Pack Bootstrap: ${projectArtifactId}-bootstrap</description>
+
+  <packaging>jpacktool-bootstrap</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>${r"${jpacktool.bootstrap.groupId}"}</groupId>
+      <artifactId>${r"${jpacktool.bootstrap.artifactId}"}</artifactId>
+      <version>${r"${jpacktool.bootstrap.version}"}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+		<groupId>net.agilhard.maven.plugins</groupId>
+		<artifactId>jpacktool-maven-plugin</artifactId>
+        <version>${r"${jpacktool.version}"}</version>
+        <extensions>true</extensions>
+
+        <configuration>
+	  		<verbose>true</verbose>
+<#if bootstrapBaseUri??>
+	  	    <baseUri>${r"${jpacktool.bootstrap.baseUri}"}</baseUri>
+</#if>
+<#if bootstrapBasePath??>
+	        <basePath>${r"${jpacktool.bootstrap.basePath}"}</basePath>
+</#if>
+	        <packForBusinessApp>false</packForBusinessApp>
+		</configuration>
+
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
