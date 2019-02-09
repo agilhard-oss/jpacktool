@@ -75,7 +75,7 @@
 		  <#if bootstrapMainClass??>
 		  <mainClass>${bootstrapMainClass}</mainClass>
 		  </#if>
-		  <#if mainModule??>
+		  <#if bootstrapMainModule??>
 		  <mainModule>${bootstrapMainModule}</mainModule>
 		  </#if>
 		  <#if sourceJdkModules??>

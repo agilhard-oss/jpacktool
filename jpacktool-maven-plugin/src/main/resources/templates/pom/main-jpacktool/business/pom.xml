@@ -37,16 +37,19 @@
   <build>
     <plugins>
       <plugin>
-	<groupId>net.agilhard.maven.plugins</groupId>
-	<artifactId>jpacktool-maven-plugin</artifactId>
+    	  <groupId>net.agilhard.maven.plugins</groupId>
+	      <artifactId>jpacktool-maven-plugin</artifactId>
         <version>${r"${jpacktool.version}"}</version>
         <extensions>true</extensions>
         <configuration>
-	  <verbose>true</verbose>
-	  <baseUri>${r"${jpacktool.business.baseUri}"}</baseUri>
-	  <basePath>${r"${jpacktool.business.basePath}"}</basePath>
-	  <packForBusinessApp>true</packForBusinessApp>
-	</configuration>
+	         <verbose>true</verbose>
+	         <baseUri>${r"${jpacktool.business.baseUri}"}</baseUri>
+	         <basePath>${r"${jpacktool.business.basePath}"}</basePath>
+           <#if businessMainClass??>
+           <mainClass>${businessMainClass}</mainClass>
+           </#if>
+	         <packForBusinessApp>true</packForBusinessApp>
+	       </configuration>
       </plugin>
     </plugins>
   </build>
