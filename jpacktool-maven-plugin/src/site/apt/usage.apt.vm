@@ -23,7 +23,9 @@ Usage
   The JPacktool Maven plugin is used to create {{{http://openjdk.java.net/jeps/220}Modular Run-Time Images}} with JDK 9
   or native installable packages via {{{http://openjdk.java.net/jeps/343}jpackage}} with JDK12
 
-  The JPacktool Maven Plugin is based on the {{{https://github.com/agilhard-oss/jlink-jpackager-maven-plugin}jlink-jpackager-maven-plugin}}.
+  The JPacktool Maven Plugin extends the Agilhard-OSS
+  {{{https://github.com/agilhard-oss/jlink-jpackager-maven-plugin}jlink-jpackager-maven-plugin}}
+  and is using it as a Java Library.
 
   This in turn is based on the Apache {{{https://github.com/apache/maven-jlink-plugin}maven-jlink-plugin}}.
 

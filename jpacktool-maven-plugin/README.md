@@ -20,7 +20,7 @@
 Maven Plugin for Projects using jlink or jpackage Java Tools 
 and [update4j](https://github.com/update4j/update4j).
 
-Based on Agilhard-OSS [jlink-jpackager-maven-plugin](https://github.com/agilhard-oss/jlink-jpackager-maven-plugin).
+Extends the Agilhard-OSS [jlink-jpackager-maven-plugin](https://github.com/agilhard-oss/jlink-jpackager-maven-plugin).
 Based on Apache [maven-jlink-plugin](https://github.com/apache/maven-jlink-plugin)
 
 [Apache License](http://www.apache.org/licenses/LICENSE-2.0)
@@ -33,8 +33,9 @@ Based on Apache [maven-jlink-plugin](https://github.com/apache/maven-jlink-plugi
   The JPacktool Maven plugin is intended to create [Modular Run-Time Images](http://openjdk.java.net/jeps/220) with **JDK 9**
   and above or native installable packages via [jpackage](http://openjdk.java.net/jeps/343) with **JDK 12** and above.
     
-  The JPacktool Maven Plugin is based on the Agilhard-OSS 
-  [jlink-jpackager-maven-plugin](https://github.com/agilhard-oss/jlink-jpackager-maven-plugin).
+  The [JPacktool Maven Plugin](./jpacktool-maven-plugin) extends the Agilhard-OSS 
+  [JLink-JPackager Maven plugin](https://github.com/agilhard-oss/jlink-jpackager-maven-plugin)
+  and is using it as a Java Library.
 
   This in turn is based on the Apache [maven-jlink-plugin](https://github.com/apache/maven-jlink-plugin).
 
