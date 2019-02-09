@@ -24,8 +24,9 @@
 
   It features the new [JPacktool Maven Plugin](./jpacktool-maven-plugin).
 
-  The [JPacktool Maven Plugin](./jpacktool-maven-plugin) is based on the Agilhard-OSS 
-  [JLink-JPackager Maven plugin](https://github.com/agilhard-oss/jlink-jpackager-maven-plugin).
+  The [JPacktool Maven Plugin](./jpacktool-maven-plugin) extends the Agilhard-OSS 
+  [JLink-JPackager Maven plugin](https://github.com/agilhard-oss/jlink-jpackager-maven-plugin)
+  and is using it as a Java Library.
 
   This in turn is based on the Apache [maven-jlink-plugin](https://github.com/apache/maven-jlink-plugin).
 
