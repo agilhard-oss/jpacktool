@@ -69,6 +69,7 @@
         <extensions>true</extensions>
 
         <configuration>
+      <buildDirectory>../../../..</buildDirectory>   
 		  <verbose>true</verbose>
 		  <baseUri>${r"${jpacktool.bootstrap.baseUri}"}</baseUri>
 		  <basePath>${r"${jpacktool.bootstrap.basePath}"}</basePath>
