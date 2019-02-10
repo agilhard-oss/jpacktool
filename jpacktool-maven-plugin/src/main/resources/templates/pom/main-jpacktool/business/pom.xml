@@ -42,14 +42,19 @@
         <version>${r"${jpacktool.version}"}</version>
         <extensions>true</extensions>
         <configuration>
+           <packForBusinessApp>true</packForBusinessApp>
 	         <verbose>true</verbose>
 	         <baseUri>${r"${jpacktool.business.baseUri}"}</baseUri>
 	         <basePath>${r"${jpacktool.business.basePath}"}</basePath>
            <#if businessMainClass??>
            <mainClass>${businessMainClass}</mainClass>
            </#if>
-	         <packForBusinessApp>true</packForBusinessApp>
-	       </configuration>
+	     <#if businessArgumentsXML??>
+      <arguments>
+${businessArgumentsXML}
+      </arguments>
+      </#if>
+         </configuration>
       </plugin>
     </plugins>
   </build>

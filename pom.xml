@@ -28,10 +28,29 @@
 	<module>update4j</module>
       </modules>
     </profile>
+
+    <profile>
+      <id>main</id>
+      <activation>
+	<activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+	<module>jpacktool-maven-plugin</module>
+	<module>jpacktool-utils</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>samples</id>
+      <activation>
+	<activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+	<module>samples</module>
+      </modules>
+    </profile>
+
   </profiles>
     
-  <modules>
-    <module>jpacktool-maven-plugin</module>
-  </modules>
   
 </project>

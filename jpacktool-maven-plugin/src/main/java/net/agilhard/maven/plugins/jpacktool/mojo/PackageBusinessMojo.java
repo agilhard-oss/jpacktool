@@ -18,6 +18,7 @@ package net.agilhard.maven.plugins.jpacktool.mojo;
  * under the License.
  */
 
+import static org.update4j.service.DefaultLauncher.ARGUMENT_PROPERTY_KEY;
 import static org.update4j.service.DefaultLauncher.MAIN_CLASS_PROPERTY_KEY;
 
 import java.io.File;
@@ -40,6 +41,7 @@ import org.update4j.Configuration.Builder;
 
 import net.agilhard.maven.plugins.jpacktool.base.mojo.AbstractToolMojo;
 import net.agilhard.maven.plugins.jpacktool.update4j.Update4jHelper;
+
 
 /**
  * Package a Business Application started from a Bootstrap Application.
@@ -85,6 +87,18 @@ public class PackageBusinessMojo extends AbstractToolMojo {
      * The main class.
      */
     protected String mainClass;
+
+
+    /**
+     * Command line arguments for the business application to pass to the main class if no arguments are
+     * specified by the launcher.
+     * <p>
+     * This sets properties in the update4j config to be picked up by the launcher.
+     * </p>
+     */
+    @Parameter(required = false, readonly = false)
+    protected List<String> arguments;
+
 
     /**
      * replace this with nothing in the name of the config file
@@ -139,6 +153,18 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 
                 if (this.mainClass != null) {
                     builder.property(MAIN_CLASS_PROPERTY_KEY, this.mainClass);
+                }
+
+                if ((this.arguments != null) && (this.arguments.size() > 0)) {
+                    int i = 1;
+                    for (final String arg : this.arguments) {
+                        if (i == 1) {
+                            builder.property(ARGUMENT_PROPERTY_KEY, arg);
+                        } else {
+                            builder.property(ARGUMENT_PROPERTY_KEY + "." + i, arg);
+                        }
+                        i++;
+                    }
                 }
 
 				for (final String jarOnClassPath : (List<String>) this.jpacktoolModel.get("jarsOnClassPath")) {

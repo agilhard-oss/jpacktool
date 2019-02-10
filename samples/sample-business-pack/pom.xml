@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>net.agilhard.jpacktool.sample</groupId>
+    <artifactId>jpacktool-sample-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  
+  <artifactId>sample-business-pack</artifactId>
+  <name>sample-business-pack</name>
+
+  <packaging>jpacktool-generic</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+	<groupId>net.agilhard.maven.plugins</groupId>
+	<artifactId>jpacktool-maven-plugin</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <extensions>true</extensions>
+
+        <configuration>
+	  <verbose>true</verbose>
+	  <businessGroupId>${project.groupId}</businessGroupId>
+	  <businessArtifactId>sample-business</businessArtifactId>
+	  <businessVersion>${project.version}</businessVersion>
+	  <businessBaseUri>http://localhost:8080/sample/business</businessBaseUri>
+	  <businessBasePath>sample-business</businessBasePath>
+	  <bootstrapBaseUri>http://localhost:8080/sample/bootstrap</bootstrapBaseUri>
+	  <bootstrapBasePath>sample/bootstrap</bootstrapBasePath>
+
+	  <baseUri>${jpacktool.bootstrap.baseUri}</baseUri>
+	  <basePath>${jpacktool.bootstrap.basePath}</basePath>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+</project>

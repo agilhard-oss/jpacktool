@@ -203,14 +203,24 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
     protected List<String> jvmArgs;
 
     /**
-     * Command line arguments to pass to the main class if no arguments are
-     * specified by the launcher.
+     * Command line arguments for the bootstrap appplication.
      * <p>
      * <code>--arguments &lt;args&gt;</code>
      * </p>
      */
     @Parameter(required = false, readonly = false)
-    protected List<String> arguments;
+    protected List<String> bootstrapArguments;
+
+    /**
+     * Command line arguments for the business application to pass to the main class if no arguments are
+     * specified by the launcher.
+     * <p>
+     * This sets properties in the update4j config to be picked up by the launcher.
+     * </p>
+     */
+    @Parameter(required = false, readonly = false)
+    protected List<String> businessArguments;
+
 
     /**
      * Set the JDK location to create a Java custom runtime image.
@@ -366,14 +376,24 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
             this.jpacktoolModel.put("bootstrapBaseUri", this.bootstrapBaseUri);
         }
 
-        if (this.arguments != null) {
+        if (this.bootstrapArguments != null) {
             final StringBuffer sb = new StringBuffer();
-            for (final String arg : this.arguments) {
+            for (final String arg : this.bootstrapArguments) {
                 sb.append("              <argument>");
                 sb.append(arg);
                 sb.append("</argument>\n");
             }
-            this.jpacktoolModel.put("argumentsXML", sb.toString());
+            this.jpacktoolModel.put("bootstrapArgumentsXML", sb.toString());
+        }
+
+        if (this.businessArguments != null) {
+            final StringBuffer sb = new StringBuffer();
+            for (final String arg : this.businessArguments) {
+                sb.append("              <argument>");
+                sb.append(arg);
+                sb.append("</argument>\n");
+            }
+            this.jpacktoolModel.put("businessArgumentsXML", sb.toString());
         }
 
         if (this.jvmArgs != null) {

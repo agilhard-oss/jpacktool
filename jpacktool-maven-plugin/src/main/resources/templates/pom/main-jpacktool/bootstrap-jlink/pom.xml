@@ -85,9 +85,9 @@
 		  <#if addJDKToLimitModules??>
 		  <addJDKToLimitModules>${addJDKToLimitModules}</addJDKToLimitModules>
 		  </#if>
-		  <#if argumentsXML??>
+		  <#if bootstrapArgumentsXML??>
 		  <arguments>
-${argumentsXML}
+${bootstrapArgumentsXML}
 		  </arguments>
 		  </#if>
 		  <#if jvmArgsXML??>

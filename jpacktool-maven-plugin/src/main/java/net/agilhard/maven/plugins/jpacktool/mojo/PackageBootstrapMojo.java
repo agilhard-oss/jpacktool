@@ -91,22 +91,20 @@ public class PackageBootstrapMojo extends AbstractToolMojo {
 	 */
 	protected boolean jpacktoolPrepareUsed;
 
-	protected Map<String, Object> jpacktoolModel;
-
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "boxing" })
 	@Override
 	public void executeToolMain() throws MojoExecutionException, MojoFailureException {
 
-		initJPacktoolModel();
+		this.initJPacktoolModel();
 
-		publishJPacktoolProperties();
+		this.publishJPacktoolProperties();
 
-		File file = new File(outputDirectoryJPacktool, "java_modules.list");
+		final File file = new File(this.outputDirectoryJPacktool, "java_modules.list");
 		if (file.exists()) {
 			file.delete();
 		}
 
-		try (final Stream<Path> pathStream = Files.walk(outputDirectoryJPacktool.toPath(),
+		try (final Stream<Path> pathStream = Files.walk(this.outputDirectoryJPacktool.toPath(),
 				FileVisitOption.FOLLOW_LINKS)) {
 			pathStream.filter((p) -> !p.toFile().isDirectory() && p.toFile().getAbsolutePath().endsWith(".jdeps"))
 					.forEach(p -> {
@@ -118,39 +116,39 @@ public class PackageBootstrapMojo extends AbstractToolMojo {
 
 		Path configPath = null;
 
-		if (generateUpdate4jConfig) {
+		if (this.generateUpdate4jConfig) {
 
-			if ((baseUri != null) && (basePath != null)) {
-				Builder builder = Update4jHelper.createBuilder(baseUri, basePath, basePathBelowUserDir);
+			if ((this.baseUri != null) && (this.basePath != null)) {
+				final Builder builder = Update4jHelper.createBuilder(this.baseUri, this.basePath, this.basePathBelowUserDir);
 
-				for (String jarOnClassPath : (List<String>) jpacktoolModel.get("jarsOnClassPath")) {
-					Update4jHelper.addToBuilder(builder, outputDirectoryClasspathJars, jarOnClassPath, true);
+				for (final String jarOnClassPath : (List<String>) this.jpacktoolModel.get("jarsOnClassPath")) {
+					Update4jHelper.addToBuilder(builder, this.outputDirectoryClasspathJars, jarOnClassPath, true);
 				}
 
-				if (outputDirectoryAutomaticJars.isDirectory()) {
-					Update4jHelper.addToBuilder(builder, outputDirectoryAutomaticJars, false);
+				if (this.outputDirectoryAutomaticJars.isDirectory()) {
+					Update4jHelper.addToBuilder(builder, this.outputDirectoryAutomaticJars, false);
 				}
-				if (outputDirectoryModules.isDirectory()) {
-					Update4jHelper.addToBuilder(builder, outputDirectoryModules, false);
+				if (this.outputDirectoryModules.isDirectory()) {
+					Update4jHelper.addToBuilder(builder, this.outputDirectoryModules, false);
 				}
 
-				String artName = project.getArtifactId();
-				if (stripConfigName != null) {
-					artName = artName.replaceAll(stripConfigName, "");
+				String artName = this.project.getArtifactId();
+				if (this.stripConfigName != null) {
+					artName = artName.replaceAll(this.stripConfigName, "");
 				}
-				
-				configPath = outputDirectoryJPacktool.toPath()
-						.resolve("update4j_" + project.getGroupId() + "_" + artName + ".xml");
+
+				configPath = this.outputDirectoryJPacktool.toPath()
+						.resolve("update4j_" + this.project.getGroupId() + "_" + artName + ".xml");
 
 				try (Writer out = Files.newBufferedWriter(configPath)) {
 					builder.build().write(out);
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					throw new MojoFailureException("i/o error");
 				}
 			}
 		}
-		
-		File createZipArchiveFromDirectory = createZipArchiveFromDirectory(this.buildDirectory,
+
+		final File createZipArchiveFromDirectory = this.createZipArchiveFromDirectory(this.buildDirectory,
 				this.outputDirectoryJPacktool);
 
 		this.mavenProjectHelper.attachArtifact(this.project, "zip", "jpacktool_bootstrap",
@@ -167,8 +165,8 @@ public class PackageBootstrapMojo extends AbstractToolMojo {
 	 * set jpacktoolPrepareUsed variable based on maven property
 	 */
 	protected void checkJpacktoolPrepareUsed() {
-		Boolean b = (Boolean) this.project.getProperties().get(this.jpacktoolPropertyPrefix + ".used");
-		jpacktoolPrepareUsed = b == null ? false : b.booleanValue();
+		final Boolean b = (Boolean) this.project.getProperties().get(this.jpacktoolPropertyPrefix + ".used");
+		this.jpacktoolPrepareUsed = b == null ? false : b.booleanValue();
 	}
 
 	/**
@@ -176,14 +174,15 @@ public class PackageBootstrapMojo extends AbstractToolMojo {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void initJPacktoolModel() {
-		checkJpacktoolPrepareUsed();
-		if (jpacktoolPrepareUsed) {
-			jpacktoolModel = (Map<String, Object>) this.project.getProperties()
+		this.checkJpacktoolPrepareUsed();
+		if (this.jpacktoolPrepareUsed) {
+			this.jpacktoolModel = (Map<String, Object>) this.project.getProperties()
 					.get(this.jpacktoolPropertyPrefix + ".model");
 		}
 	}
 
-	public String getFinalName() {
-		return finalName;
+	@Override
+    public String getFinalName() {
+		return this.finalName;
 	}
 }
