@@ -30,6 +30,12 @@
       <groupId>${r"${jpacktool.business.groupId}"}</groupId>
       <artifactId>${r"${jpacktool.business.artifactId}"}</artifactId>
       <version>${r"${jpacktool.business.version}"}</version>
+		<exclusions>
+			<exclusion>
+				<groupId>javax.jnlp</groupId>
+				<artifactId>jnlp</artifactId>
+			</exclusion>
+		</exclusions>
     </dependency>
 
   </dependencies>

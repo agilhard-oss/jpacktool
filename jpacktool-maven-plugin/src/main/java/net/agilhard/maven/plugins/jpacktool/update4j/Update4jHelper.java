@@ -46,9 +46,9 @@ public class Update4jHelper {
 
 		if (p.toFile().exists()) {
 			if (classpath) {
-				builder.file(FileMetadata.readFrom(p).path(sp).classpath());
+				builder.file(FileMetadata.readFrom(p).path(sp).classpath().ignoreBootConflict());
 			} else {
-				builder.file(FileMetadata.readFrom(p).path(sp).modulepath());
+				builder.file(FileMetadata.readFrom(p).path(sp).modulepath().ignoreBootConflict());
 			}
 		}
 		return builder;
@@ -78,9 +78,9 @@ public class Update4jHelper {
 				String name = p.getFileName().toString();
 				String sp = subdir + "/" + name;
 				if (classpath) {
-					builder.file(FileMetadata.readFrom(p).path(sp).classpath());
+					builder.file(FileMetadata.readFrom(p).path(sp).classpath().ignoreBootConflict());
 				} else {
-					builder.file(FileMetadata.readFrom(p).path(sp).modulepath());
+					builder.file(FileMetadata.readFrom(p).path(sp).modulepath().ignoreBootConflict());
 				}
 			});
 		} catch (final IOException e) {

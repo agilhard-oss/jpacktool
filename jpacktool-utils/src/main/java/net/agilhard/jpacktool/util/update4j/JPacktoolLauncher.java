@@ -57,14 +57,7 @@ public class JPacktoolLauncher implements Launcher {
     }
 
     public void illegalState(final String message) {
-        this.splashScreenHelper.setMessage(message);
-
-        // just wait a while that the error message can be seen
-        try {
-            Thread.sleep(50000);
-        } catch (final InterruptedException ignored) {//ignored
-
-        }
+        this.splashScreenHelper.error(message);
         throw new IllegalStateException(message);
     }
 
@@ -143,14 +136,7 @@ public class JPacktoolLauncher implements Launcher {
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException
             | NoSuchMethodException e) {
 
-            this.splashScreenHelper.setMessage("Error in application startup");
-
-            // just wait a while that the error message can be seen
-            try {
-                Thread.sleep(50000);
-            } catch (final InterruptedException ignored) {//ignored
-
-            }
+            this.splashScreenHelper.error("Error in application startup");
 
             throw new RuntimeException(e);
         }
@@ -159,7 +145,7 @@ public class JPacktoolLauncher implements Launcher {
     // @formatter:off
     private static void usage() {
         System.err.println("Customize the setup of the launcher by setting properties in the config\n"
-                        + "\taccording tothe following table:\n\n" + table() );
+                        + "\taccording to the following table:\n\n" + table() );
     }
 
     private static String table() {

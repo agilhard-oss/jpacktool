@@ -30,11 +30,15 @@
 	  <businessVersion>${project.version}</businessVersion>
 	  <businessBaseUri>http://localhost:8080/sample/business</businessBaseUri>
 	  <businessBasePath>sample-business</businessBasePath>
+	  <businessMainClass>net.agilhard.jpacktool.sample.business.SampleBusiness</businessMainClass>
 	  <bootstrapBaseUri>http://localhost:8080/sample/bootstrap</bootstrapBaseUri>
 	  <bootstrapBasePath>sample/bootstrap</bootstrapBasePath>
 
 	  <baseUri>${jpacktool.bootstrap.baseUri}</baseUri>
 	  <basePath>${jpacktool.bootstrap.basePath}</basePath>
+          <splashScreenOptions>
+		<file>src/main/jpacktool/splash.gif</file>
+	  </splashScreenOptions>
 	</configuration>
       </plugin>
     </plugins>

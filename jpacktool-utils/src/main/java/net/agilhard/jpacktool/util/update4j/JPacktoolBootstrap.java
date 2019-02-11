@@ -18,13 +18,174 @@ package net.agilhard.jpacktool.util.update4j;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
+import org.update4j.Configuration;
+import org.update4j.FileMetadata;
+import org.update4j.service.Delegate;
+import org.update4j.service.Launcher;
+import org.update4j.service.UpdateHandler;
+
+import net.agilhard.jpacktool.util.splash.SplashScreenHelper;
+
 /**
  * @author Bernd Eilers
  */
-public class JPacktoolBootstrap {
+public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 
-    public static void main(final String[] args) {
-        System.err.println("JPacktoolBootstrap is not yet implemented.");
-    }
+	private SplashScreenHelper splash;
+
+	public JPacktoolBootstrap() {
+        splash = SplashScreenHelper.getInstance();
+	}
+
+	public static void main(String[] args) throws Throwable {
+		JPacktoolBootstrap app = new JPacktoolBootstrap();
+		app.main(Arrays.asList(args));
+	}
+	
+	@Override
+	public void main(List<String> args) throws Throwable {
+		File propsFile = new File(new File("conf"),"jpacktool.properties");
+		if ( ! propsFile.exists() ) {
+			error("properties file not found");
+			throw new FileNotFoundException("conf/jpacktool.properties");
+		}
+		Properties props = new Properties();
+		try ( FileInputStream inStream = new FileInputStream(propsFile) ) {
+			props.load(inStream);
+		} catch (IOException ioe ) {
+			error("I/O error reading properties file");
+		}
+		String projectConfigName=props.getProperty("projectConfigName");
+		String businessBaseUri=props.getProperty("businessBaseUri");
+		if ( (projectConfigName == null) || (businessBaseUri == null) ) {
+			error("needed properties not found");
+			return;
+		}
+		start(businessBaseUri, projectConfigName);
+	}
+
+	
+	public void message(String text) {
+		System.out.println(text);
+		splash.setMessage(text);
+	}
+	
+	public void error(String text) {
+		System.err.println(text);
+		splash.error(text);
+	}
+	public void error(String textShort, String text) {
+		System.err.println(text);
+		splash.error(textShort);
+	}
+	
+	void start(String baseUri, String configName) throws IOException {
+		
+		URL configUrl;
+		try {
+			configUrl = new URL(baseUri+"/"+configName);
+		} catch (MalformedURLException e1) {
+			return;
+		}
+		
+		Configuration config = null;
+		try (Reader in = new InputStreamReader(configUrl.openStream(), StandardCharsets.UTF_8)) {
+			config = Configuration.read(in);
+		} catch (IOException e) {
+			message("Could not load remote config, falling back to local.");
+			File confDir = new File("conf");
+			if ( ! confDir.isDirectory()  ) {
+				error("conf is not a directory");
+				return;
+			}
+			Path path = confDir.toPath().resolve(configName);
+			message("marke1: "+path.toFile().getAbsolutePath());
+			try (Reader in = Files.newBufferedReader(path)) {
+				config = Configuration.read(in);
+				message("marke2");
+
+			} catch (IOException ioe) {
+				error("could not read local config");
+				throw ioe;
+			}
+		}
+		
+		message("checking if update is required");
+		
+		try {
+			if ( config.requiresUpdate()) {
+				message("updating application ...");
+				config.update((UpdateHandler)this);
+			} else {
+				message("no update required");
+			}
+		} catch (IOException ioe) {
+			error("I/O error while checking for update");
+			throw ioe;
+		}
+		
+		message("launching ...");
+		Launcher launcher = new JPacktoolLauncher();
+		config.launch(launcher);
+	}
+
+	
+	public void startCheckUpdates() throws Throwable {
+		message("starting to check for updates ...");
+	}
+	
+	/**
+	 * Called on each file before any check is performed.
+	 * 
+	 * <p>
+	 * If {@code false} is returned, this file will completely skip the update
+	 * process and the system will immediately proceed with the next file.
+	 * {@link #doneCheckUpdateFile(FileMetadata, boolean)} will <em>not</em> be
+	 * called.
+	 */
+	public boolean startCheckUpdateFile(FileMetadata file) throws Throwable {
+		message("checking "+file.getPath());
+		return true;
+	}
+	
+	public void doneCheckUpdates() throws Throwable {
+		message("... done checking for updates");
+	}
+	
+	public void startDownloads() throws Throwable {
+		message("start downloading ...");
+	}
+	
+	public void startDownloadFile(FileMetadata file) throws Throwable {
+		message("downloading "+file.getPath());
+	}
+	
+	public void doneDownloads() throws Throwable {
+	}
+
+	public void failed(Throwable t) {
+		//t.printStackTrace(System.err);
+		error("update failed!", "update failed: "+t.getMessage());
+	}
+
+	public void succeeded() {
+		message("update succeeded!");
+	}
 
 }

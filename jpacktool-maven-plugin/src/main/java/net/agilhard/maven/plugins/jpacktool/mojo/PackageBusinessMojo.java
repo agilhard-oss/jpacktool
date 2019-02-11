@@ -86,6 +86,7 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 	/**
      * The main class.
      */
+	@Parameter(required = false, readonly = false)
     protected String mainClass;
 
 

@@ -21,7 +21,6 @@
   </parent>
 
   <artifactId>jpacktool-utils</artifactId>
-  <groupId>net.agilhard.jpacktool</groupId>
   <packaging>jar</packaging>
 
   <name>JPacktool Utils</name>

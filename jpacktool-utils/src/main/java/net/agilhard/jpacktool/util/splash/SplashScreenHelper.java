@@ -58,7 +58,7 @@ public class SplashScreenHelper {
             this.drawColor = new Color(178, 6, 41);
             this.graphics.setBackground(this.transparentColor);
             this.graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            this.graphics.setFont(new Font("TimesRoman", Font.PLAIN, 20));
+            this.graphics.setFont(new Font("TimesRoman", Font.PLAIN, 16));
             this.graphics.setColor(this.drawColor);
         }
         this.x = 60;
@@ -144,5 +144,19 @@ public class SplashScreenHelper {
         }
     }
 
+    /**
+     * show error and wait a while
+     * @param msg
+     */
+    public void error(final String msg) {
+    	
+    	setMessage(msg);
+    	
+        // just wait a while that the error message can be seen
+        try {
+            Thread.sleep(50000);
+        } catch (final InterruptedException ignored) {//ignored
 
+        }
+    }
 }

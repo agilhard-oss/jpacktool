@@ -34,6 +34,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import net.agilhard.maven.plugins.jpacktool.base.mojo.AbstractTemplateToolMojo;
+import net.agilhard.maven.plugins.jpacktool.extend.mojo.SplashScreenOptions;
 
 /**
  * Generate pom for packaging a project using a Bootstrap and a Business
@@ -48,7 +49,6 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/maven-jpacktool/build", required = true, readonly = true)
 	protected File outputDirectoryBuild;
-
 
 	/**
 	 * GroupId of the generated project. If not set the businessGroupId is being
@@ -162,11 +162,10 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 	 */
 	@Parameter(required = false, readonly = false)
 	protected String businessMainClass;
-	
-	
+
 	/**
 	 * replace this with nothing in the name of the config file
-	 */	
+	 */
 	@Parameter(required = false, readonly = false, defaultValue = "-jpacktool")
 	protected String stripConfigName;
 
@@ -188,7 +187,6 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 	 */
 	@Parameter(required = false, readonly = false, defaultValue = "resource:/templates/pom/main-jpacktool/business/pom.xml")
 	protected String templateBusiness;
-
 
 	/**
 	 * JVM flags and options to pass to the application.
@@ -302,9 +300,15 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 	@Parameter(defaultValue = "jmods")
 	protected String modulesFolderName;
 
+	/**
+	 * Options for the SplashScreen
+	 */
+	@Parameter(required = false, readonly = false)
+	SplashScreenOptions splashScreenOptions;
+
 	public AbstractGenerateJPacktoolPomMojo() {
 	}
-	
+
 	public abstract String getPackagingTool();
 
 	@Override
@@ -354,7 +358,7 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 
 		for (String key : jpacktoolModel.keySet()) {
 			Object value = jpacktoolModel.get(key);
-			if (value != null) {
+			if ( (value != null) && (!key.matches(".*(File|Directory|Properties).*")) ) {
 				prop.setProperty(key, value.toString());
 			}
 		}
@@ -369,8 +373,6 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 
 	}
 
-	
-	
 	@SuppressWarnings("boxing")
 	protected void initJPacktoolModel() throws MojoFailureException {
 		this.jpacktoolModel = new HashMap<>();
@@ -471,21 +473,41 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 			this.jpacktoolModel.put("addModulesXML", sb.toString());
 		}
 
-		String artName = this.projectArtifactId ;
+		String artName = this.projectArtifactId;
 		if (this.stripConfigName != null) {
 			artName = artName.replaceAll(this.stripConfigName, "");
 		}
 		String projectConfigName = "update4j_" + this.projectGroupId + "_" + artName + "-business.xml";
-		this.jpacktoolModel.put("projectConfigName",projectConfigName);
+		this.jpacktoolModel.put("projectConfigName", projectConfigName);
 		String jlinkConfigName = "update4j_" + this.projectGroupId + "_" + artName + "-jlink.xml";
-		this.jpacktoolModel.put("jlinkConfigName",jlinkConfigName);
-		
+		this.jpacktoolModel.put("jlinkConfigName", jlinkConfigName);
+
 		File propertiesFile = new File(this.outputDirectoryBuild, "jpacktool.properties");
 		try {
 			this.jpacktoolModel.put("jpacktoolProperties", propertiesFile.getCanonicalFile());
 		} catch (IOException e) {
 			throw new MojoFailureException("i/o error", e);
 		}
+
+		if (this.splashScreenOptions != null) {
+			this.jpacktoolModel.put("splashScreenFile", splashScreenOptions.getFile());
+			if (splashScreenOptions.getName() != null) {
+				this.jpacktoolModel.put("splashScreenName", splashScreenOptions.getName());
+			}
+			if (splashScreenOptions.getX() > 0) {
+				this.jpacktoolModel.put("splashScreenX", splashScreenOptions.getX());
+			}
+			if (splashScreenOptions.getY() > 0) {
+				this.jpacktoolModel.put("splashScreenY", splashScreenOptions.getY());
+			}
+			if (splashScreenOptions.getFontSize() > 0) {
+				this.jpacktoolModel.put("splashScreenFontSize", splashScreenOptions.getFontSize());
+			}
+			if (splashScreenOptions.getFontName() != null) {
+				this.jpacktoolModel.put("splashScreenFontName", splashScreenOptions.getFontName());
+			}
+		}
+
 	}
 
 	@Override
@@ -497,7 +519,6 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 
 	protected abstract void generatePoms(File mainDir) throws MojoFailureException;
 
-	
 	protected void generatePoms() throws MojoFailureException {
 		final File mainDir = new File(this.outputDirectoryBuild, this.projectArtifactId);
 		this.generatePom("main_pom.xml", mainDir);

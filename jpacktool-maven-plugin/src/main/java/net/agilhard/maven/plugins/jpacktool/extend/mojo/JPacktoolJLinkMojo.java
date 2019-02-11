@@ -89,6 +89,12 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 	@Parameter(required = false, readonly = false, defaultValue = "-jpacktool")
 	protected String stripConfigName;
 
+	/**
+	 * Options for the SplashScreen
+	 */
+	@Parameter (required = false, readonly = false)
+	SplashScreenOptions splashScreenOptions;
+			
 	public JPacktoolJLinkMojo() {
 		super();
 	}
@@ -109,6 +115,19 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 			}
 		}
 
+		if ( (splashScreenOptions != null) && ( splashScreenOptions.file != null) ) {
+			
+			Path outDir = outputDirectory.toPath().resolve("conf");
+			String name = splashScreenOptions.name == null ? splashScreenOptions.file.getName() : splashScreenOptions.name;
+			Path target = outDir.resolve(name);
+			
+			try {
+				Files.copy(splashScreenOptions.file.toPath(), target, REPLACE_EXISTING);
+			} catch (IOException e) {
+				throw new MojoExecutionException("i/o error", e);
+			}
+		}
+		
 		if (generateUpdate4jConfig) {
 			if (dir.toFile().isDirectory()) {
 				Path outDir = outputDirectory.toPath().resolve("conf");
@@ -156,4 +175,17 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 			}
 		}
 	}
+	
+	protected void updateJvmArgs() throws MojoFailureException {
+		super.updateJvmArgs();
+		
+		if ( (splashScreenOptions != null) && ( splashScreenOptions.file != null) ) {
+			String name = splashScreenOptions.name == null ? splashScreenOptions.file.getName() : splashScreenOptions.name;
+			StringBuffer opt=new StringBuffer("-splash:conf");
+			opt.append(File.separatorChar);
+			opt.append(name);
+			jvmArgs.add(opt.toString());
+		}
+	}
+
 }

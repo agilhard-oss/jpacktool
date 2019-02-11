@@ -118,6 +118,26 @@ ${jvmArgsXML}
 <#if jpacktoolProperties??>
  	      <jpacktoolProperties>${jpacktoolProperties}</jpacktoolProperties>
 </#if>
+<#if splashScreenFile??>
+          <splashScreenOptions>
+          	<file>${splashScreenFile}</file>
+<#if splashScreenName??>
+          	<name>${splashScreenName}</name>
+</#if>
+<#if splashScreenX??>
+          	<x>${splashScreenX}</x>
+</#if>
+<#if splashScreenY??>
+          	<y>${splashScreenX}</y>
+</#if>
+ <#if splashScreenFontName??>
+          	<fontName>${splashScreenFontName}</fontName>
+</#if>
+<#if splashScreenFontSize??>
+          	<fontSize>${splashFontSize}</fontSize>
+</#if>
+          </splashScreenOptions>
+</#if>
 		</configuration>
       </plugin>
     </plugins>
