@@ -61,8 +61,8 @@ public class SplashScreenHelper {
             this.graphics.setFont(new Font("TimesRoman", Font.PLAIN, 20));
             this.graphics.setColor(this.drawColor);
         }
-        this.x = 50;
-        this.y = 210;
+        this.x = 60;
+        this.y = 200;
     }
 
     /**
