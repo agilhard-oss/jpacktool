@@ -48,6 +48,23 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
     protected File outputDirectoryBuild;
 
     /**
+     * The output directory for the resulting Run Time Image when packagingTool is &quot;jlink&quot;
+     * The created Run Time Image is stored in non compressed form.
+     * This will later being packaged into a
+     * <code>zip</code> file. <code>--output &lt;path&gt;</code>
+     */
+    // TODO: is this a good final location?
+    @Parameter(defaultValue = "${project.build.directory}/maven-jlink", required = true, readonly = true)
+    protected File outputDirectoryImage;
+
+    /**
+     * Packaging tool.
+     * can be either &quot;jlink&quot; or &quot;jpackage&quot;
+     */
+    @Parameter(required = true, readonly = false, defaultValue = "jlink")
+    protected String packagingTool;
+
+    /**
      * GroupId of the generated project.
      * If not set the businessGroupId is being used.
      */
@@ -88,19 +105,22 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
     /**
      * GroupId of the Bootstrap Application.
      */
-    @Parameter(required = true, readonly = false)
+    @Parameter(required = true, readonly = false, defaultValue = "net.agilhard.jpacktool")
     protected String bootstrapGroupId;
 
     /**
      * ArtifactId of the Bootstrap Application.
      */
-    @Parameter(required = true, readonly = false)
+    @Parameter(required = true, readonly = false, defaultValue = "jpacktool-utils")
     protected String bootstrapArtifactId;
 
     /**
      * Version of the Bootstrap Application.
+     * <p>
+     * If not set this is set to the version of the plugin.
+     * </p>
      */
-    @Parameter(required = true, readonly = false)
+    @Parameter(required = false, readonly = false)
     protected String bootstrapVersion;
 
     /**
@@ -142,7 +162,8 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
     /**
      * The main class for the Bootstrap Application.
      */
-    @Parameter(required = true, readonly = false)
+    @Parameter(
+        required = true, readonly = false, defaultValue = "net.agilhard.jpacktool.util.update4j.JPacktoolBootstrap")
     protected String bootstrapMainClass;
 
     /**
@@ -220,7 +241,6 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
      */
     @Parameter(required = false, readonly = false)
     protected List<String> businessArguments;
-
 
     /**
      * Set the JDK location to create a Java custom runtime image.
@@ -306,13 +326,6 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
     @Parameter(defaultValue = "jmods")
     protected String modulesFolderName;
 
-    /**
-     * Packaging mode.
-     * can be either &quot;jlink&quot; or &quot;jpackage&quot;
-     */
-    @Parameter(required = true, readonly = false, defaultValue = "jlink")
-    protected String packagingTool;
-
     public GenerateJPacktoolPomMojo() {}
 
     @Override
@@ -331,7 +344,7 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
         }
     }
 
-    protected void initDefaults() {
+    protected void initDefaults() throws MojoFailureException {
         if (this.projectGroupId == null) {
             this.projectGroupId = this.businessGroupId;
         }
@@ -341,7 +354,9 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
         if (this.projectVersion == null) {
             this.projectVersion = this.businessVersion;
         }
-
+        if (this.bootstrapVersion == null) {
+            this.bootstrapVersion = this.getPluginVersion();
+        }
     }
 
     @SuppressWarnings("boxing")
@@ -349,6 +364,9 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
         this.jpacktoolModel = new HashMap<>();
 
         this.jpacktoolModel.put("jpacktoolVersion", this.getPluginVersion());
+        this.jpacktoolModel.put("buildDirectory",
+            ".." + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + "..");
+
         this.jpacktoolModel.put("packagingTool", this.packagingTool);
         this.jpacktoolModel.put("projectGroupId", this.projectGroupId);
         this.jpacktoolModel.put("projectArtifactId", this.projectArtifactId);
@@ -366,7 +384,6 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
         this.jpacktoolModel.put("bootstrapMainClass", this.bootstrapMainClass);
         this.jpacktoolModel.put("bootstrapMainModule", this.bootstrapMainModule);
         this.jpacktoolModel.put("businessMainClass", this.businessMainClass);
-
 
         if (this.bootstrapBasePath != null) {
             this.jpacktoolModel.put("bootstrapBasePath", this.bootstrapBasePath);
@@ -442,6 +459,11 @@ public class GenerateJPacktoolPomMojo extends AbstractTemplateToolMojo {
             this.jpacktoolModel.put("addModulesXML", sb.toString());
         }
 
+        if ("jlink".equals(this.packagingTool)) {
+            if (this.outputDirectoryImage != null) {
+                this.jpacktoolModel.put("outputDirectoryImage", this.outputDirectoryImage.getPath());
+            }
+        }
     }
 
     @Override

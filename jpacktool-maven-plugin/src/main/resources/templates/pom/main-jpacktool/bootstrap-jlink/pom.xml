@@ -69,47 +69,53 @@
         <extensions>true</extensions>
 
         <configuration>
-      <buildDirectory>../../../..</buildDirectory>   
+<#if buildDirectory??>        
+      <buildDirectory>${buildDirectory}</buildDirectory> 
+ </#if>      
 		  <verbose>true</verbose>
 		  <baseUri>${r"${jpacktool.bootstrap.baseUri}"}</baseUri>
 		  <basePath>${r"${jpacktool.bootstrap.basePath}"}</basePath>
-		  <#if bootstrapMainClass??>
+<#if bootstrapMainClass??>
 		  <mainClass>${bootstrapMainClass}</mainClass>
-		  </#if>
-		  <#if bootstrapMainModule??>
+</#if>
+<#if bootstrapMainModule??>
 		  <mainModule>${bootstrapMainModule}</mainModule>
-		  </#if>
-		  <#if sourceJdkModules??>
+</#if>
+<#if sourceJdkModules??>
 		  <sourceJdkModules>${sourceJdkModules}</sourceJdkModules>
-		  </#if>
-		  <#if addJDKToLimitModules??>
+</#if>
+<#if addJDKToLimitModules??>
 		  <addJDKToLimitModules>${addJDKToLimitModules}</addJDKToLimitModules>
-		  </#if>
-		  <#if bootstrapArgumentsXML??>
+</#if>
+<#if bootstrapArgumentsXML??>
 		  <arguments>
 ${bootstrapArgumentsXML}
 		  </arguments>
-		  </#if>
-		  <#if jvmArgsXML??>
+</#if>
+<#if jvmArgsXML??>
 		  <jvmArgs>
 ${jvmArgsXML}
 		  </jvmArgs>
-		  </#if>
-		  <#if modulePathsXML??>
+</#if>
+<#if modulePathsXML??>
 		  <modulePaths>
 ${modulePathsXML}
 		  </modulePaths>
-		  </#if>
-		  <#if limitModulesXML??>
+</#if>
+<#if limitModulesXML??>
 		  <limitModules>
 ${limitModulesXML}
 		  </limitModules>
-		  </#if>
-		  <#if addModulesXML??>
+</#if>
+<#if addModulesXML??>
 		  <addModules>
 ${jvmArgsXML}
 		  </addModulesXML>
-		  </#if>	  
+ </#if>
+ <#if outputDirectoryImage??>
+      <outputDirectoryImage>${outputDirectoryImage}</outputDirectoryImage>
+ </#if>
+      	  
 		</configuration>
 
       </plugin>

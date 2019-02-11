@@ -10,8 +10,8 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   
-  <artifactId>sample-business-pack</artifactId>
-  <name>sample-business-pack</name>
+  <artifactId>sample-pack</artifactId>
+  <name>sample-pack</name>
 
   <packaging>jpacktool-generic</packaging>
 
