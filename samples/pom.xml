@@ -19,7 +19,7 @@
 
   <modules>
 	<module>sample-business</module>
-	<module>sample-business-pack</module>
+	<module>sample-pack</module>
   </modules>
 
 </project>
