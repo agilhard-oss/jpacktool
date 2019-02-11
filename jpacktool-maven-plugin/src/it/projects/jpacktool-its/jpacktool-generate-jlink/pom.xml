@@ -60,7 +60,7 @@
 	<executions>
 	  <execution>
 	    <goals>
-	      <goal>jpacktool-generate-pom</goal>
+	      <goal>jpacktool-generate-jlink</goal>
 	    </goals>
 	  </execution>
 	</executions>

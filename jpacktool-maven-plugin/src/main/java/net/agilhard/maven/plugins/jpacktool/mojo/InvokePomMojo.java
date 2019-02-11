@@ -165,19 +165,22 @@ public class InvokePomMojo extends AbstractMojo {
 		runBuild(mainDir, pomFile, settingsFile, javaHome, "clean", "install");
 	
 		File propertiesFile = new File(this.outputDirectoryBuild,"jpacktool.properties");
-		Properties prop=new Properties();
-		SimpleDateFormat sdf;
-		sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-		String text = sdf.format(new Date());
-		prop.setProperty("timestamp",text);
+
+		if ( ! propertiesFile.exists() ) {
+			Properties prop=new Properties();
+			SimpleDateFormat sdf;
+			sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+			String text = sdf.format(new Date());
+			prop.setProperty("timestamp",text);
 		
-		try ( FileOutputStream out = new FileOutputStream(propertiesFile)) {
-			prop.store(out, "jpacktool-generic");
-		} catch (FileNotFoundException e) {
-			throw new MojoExecutionException("file not found", e);
-		} catch (IOException e) {
-			throw new MojoExecutionException("i/o error", e);
+			try ( FileOutputStream out = new FileOutputStream(propertiesFile)) {
+				prop.store(out, "jpacktool");
+			} catch (FileNotFoundException e) {
+				throw new MojoExecutionException("file not found", e);
+			} catch (IOException e) {
+				throw new MojoExecutionException("i/o error", e);
+			}
 		}
 		
 		project.getArtifact().setFile(propertiesFile);

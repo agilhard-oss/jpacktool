@@ -184,7 +184,9 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 				}
 
 				configPath = this.outputDirectoryJPacktool.toPath()
-						.resolve("update4j_" + this.project.getGroupId() + "_" + this.project.getArtifactId() + ".xml");
+						.resolve("update4j_" + this.project.getGroupId() + "_" + artName + ".xml");
+				
+				
 				try (Writer out = Files.newBufferedWriter(configPath)) {
 					builder.build().write(out);
 				} catch (final IOException e) {

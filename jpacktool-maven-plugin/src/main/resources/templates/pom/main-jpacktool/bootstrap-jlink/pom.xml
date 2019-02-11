@@ -111,13 +111,14 @@ ${limitModulesXML}
 		  <addModules>
 ${jvmArgsXML}
 		  </addModulesXML>
- </#if>
- <#if outputDirectoryImage??>
-      <outputDirectoryImage>${outputDirectoryImage}</outputDirectoryImage>
- </#if>
-      	  
+</#if>
+<#if outputDirectoryImage??>
+      	  <outputDirectoryImage>${outputDirectoryImage}</outputDirectoryImage>
+</#if>
+<#if jpacktoolProperties??>
+ 	      <jpacktoolProperties>${jpacktoolProperties}</jpacktoolProperties>
+</#if>
 		</configuration>
-
       </plugin>
     </plugins>
   </build>

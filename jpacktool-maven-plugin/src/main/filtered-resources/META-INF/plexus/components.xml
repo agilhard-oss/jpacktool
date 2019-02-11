@@ -426,7 +426,7 @@
             <!-- START SNIPPET: jpacktool-generic-lifecycle -->
             <phases>
               <generate-sources>
-                net.agilhard.maven.plugins:jpacktool-maven-plugin::${project.version}:jpacktool-generate-pom
+                net.agilhard.maven.plugins:jpacktool-maven-plugin::${project.version}:jpacktool-generate-jlink
               </generate-sources>
               <process-resources>
                 org.apache.maven.plugins:maven-resources-plugin:3.1.0:resources

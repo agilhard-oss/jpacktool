@@ -72,6 +72,12 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 	protected String baseUri;
 
 	/**
+	 * The jpacktool.properties file
+	 */
+	@Parameter(required = false, readonly = false)
+	protected File jpacktoolProperties;
+
+	/**
 	 * Set if to generate an update4j config file
 	 */
 	@Parameter(required = false, readonly = false, defaultValue = "true")
@@ -80,7 +86,7 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 	/**
 	 * replace this with nothing in the name of the config file
 	 */
-	@Parameter(required = false, readonly = false)
+	@Parameter(required = false, readonly = false, defaultValue = "-jpacktool")
 	protected String stripConfigName;
 
 	public JPacktoolJLinkMojo() {
@@ -89,12 +95,25 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 
 	protected void generateContent(File outputDirectory) throws MojoExecutionException {
 
-		if (generateUpdate4jConfig) {
-			Path dir = outputDirectoryJPacktool.toPath().resolve("conf");
+		Path dir = outputDirectoryJPacktool.toPath().resolve("conf");
+
+		if (jpacktoolProperties != null) {
 			if (dir.toFile().isDirectory()) {
+				Path outDir = outputDirectory.toPath().resolve("conf");
+				Path target = outDir.resolve("jpacktool.properties");
+				try {
+					Files.copy(jpacktoolProperties.toPath(), target, REPLACE_EXISTING);
+				} catch (IOException e) {
+					throw new MojoExecutionException("i/o error", e);
+				}
+			}
+		}
+
+		if (generateUpdate4jConfig) {
+			if (dir.toFile().isDirectory()) {
+				Path outDir = outputDirectory.toPath().resolve("conf");
 				int i = dir.getNameCount();
 
-				Path outDir = outputDirectory.toPath().resolve("conf");
 				try (final Stream<Path> pathStream = Files.walk(dir, FileVisitOption.FOLLOW_LINKS)) {
 					pathStream.filter((p) -> !p.toFile().isDirectory()).forEach(p -> {
 						Path target = outDir.resolve(p.subpath(i, p.getNameCount()));

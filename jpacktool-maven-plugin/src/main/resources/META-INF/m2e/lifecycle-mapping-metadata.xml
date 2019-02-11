@@ -30,7 +30,7 @@
           <goal>jpacktool-prepare</goal>
           <goal>jpacktool-pack-bootstrap</goal>
           <goal>jpacktool-pack-business</goal>
-          <goal>jpacktool-generate-pom</goal>
+          <goal>jpacktool-generate-jlink</goal>
           <goal>jpacktool-invoke-pom</goal>
           <goal>collect-jars</goal>
           <goal>collect-nonmod-jars</goal>        
