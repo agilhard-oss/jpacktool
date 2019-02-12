@@ -55,9 +55,13 @@ public class SampleBusiness {
 
         // counter for demo init phase with splashscreen
         for (int i = 0; i <= 20; i++) {
-            helper.setMessage("Initializing: " + i);
+        	if ( i < args.length ) {
+        		helper.setMessage("Args["+i+"]="+args[i]);
+        	} else {
+        		helper.setMessage("Initializing: " + i);
+        	}
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (final InterruptedException ignored) {//ignored
 
             }

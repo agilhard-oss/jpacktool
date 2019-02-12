@@ -25,6 +25,13 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+
+/**
+ * Generate pom for packaging a project using a Bootstrap and a Business
+ * Application and use JPackage as the final step - not yet implemented.
+ *
+ * @author Bernd Eilers
+ */
 @Mojo(name = "jpacktool-generate-jpackage", requiresDependencyResolution = ResolutionScope.NONE, defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresProject = true)
 public class GenerateJPackagePomMojo extends AbstractGenerateJPacktoolPomMojo {
 

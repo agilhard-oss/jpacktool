@@ -32,7 +32,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import org.update4j.Configuration;
 import org.update4j.FileMetadata;
@@ -46,6 +48,8 @@ import net.agilhard.jpacktool.util.splash.SplashScreenHelper;
  * @author Bernd Eilers
  */
 public class JPacktoolBootstrap implements Delegate, UpdateHandler {
+
+	public static final String ARGUMENT_PROPERTY_KEY = "business.argument";
 
 	private SplashScreenHelper splash;
 	private List<String> businessArgs;
@@ -99,34 +103,73 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 
 		Properties props = null;
 
-		if (!propsFile.exists() && ((businessBaseUri == null) || (projectConfigName == null))) {
-			error("Properties file not found!");
-			throw new FileNotFoundException("conf/jpacktool.properties");
-		} else {
-			props = new Properties();
-		}
+		if (propsFile.isFile() ) {
 
-		if (props != null) {
+			props = new Properties();
 
 			try (FileInputStream inStream = new FileInputStream(propsFile)) {
 				props.load(inStream);
 			} catch (IOException ioe) {
 				error("I/O error reading properties file!");
 			}
+		}
+
+		propsFile = new File(new File("conf"), "bootstrap.properties");
+
+		if (propsFile.isFile()) {
+
+			if (props == null) {
+				props = new Properties();
+			}
+
+			try (FileInputStream inStream = new FileInputStream(propsFile)) {
+				props.load(inStream);
+			} catch (IOException ioe) {
+				error("I/O error reading properties file!");
+			}
+		}
+
+		if (props != null) {
 
 			if (projectConfigName == null) {
 				projectConfigName = props.getProperty("projectConfigName");
 			}
+
 			if (businessBaseUri == null) {
 				businessBaseUri = props.getProperty("businessBaseUri");
 			}
-
-			if ((projectConfigName == null) || (businessBaseUri == null)) {
-				error("Needed properties not found!");
-				return;
-			}
 		}
 
+		if ( projectConfigName == null ) {
+			error("projectConfigName not set");
+			return;
+		}
+		
+		if (businessBaseUri == null) {
+			error("businessBaseUri");
+			return;
+		}
+
+		
+        final String argument = props.getProperty(ARGUMENT_PROPERTY_KEY);
+        if (argument != null) {
+            this.businessArgs.add(argument);
+        }
+
+        // use TreeMap to sort
+        Map<String,String> argMap=new TreeMap<>();
+        props.entrySet().stream().forEach(e -> {
+            final String pfx = ARGUMENT_PROPERTY_KEY + ".";
+            // starts with but not equals, to filter missing <name> part
+            if (((String)e.getKey()).startsWith(pfx) && !e.getKey().equals(pfx)) {
+				String key = ((String)e.getKey()).substring(pfx.length());
+				argMap.put(key, ((String)e.getValue()));
+            }
+        });
+        argMap.entrySet().stream().forEach(e -> {
+				businessArgs.add(e.getValue());
+        });
+        
 		System.out.println("uri=" + businessBaseUri);
 		System.out.println("config=" + projectConfigName);
 
@@ -135,23 +178,35 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 	}
 
 	public void message(String text) {
-		System.out.println(text);
-		splash.setMessage(text);
+		if (text != null) {
+			System.out.println(text);
+			splash.setMessage(text);
+		}
 	}
 
 	public void message(String textShort, String text) {
-		System.out.println(text);
-		splash.setMessage(textShort);
+		if (text != null) {
+			System.out.println(text);
+		}
+		if (textShort != null) {
+			splash.setMessage(textShort);
+		}
 	}
 
 	public void error(String text) {
-		System.err.println(text);
-		splash.error(text);
+		if (text != null) {
+			System.err.println(text);
+			splash.error(text);
+		}
 	}
 
 	public void error(String textShort, String text) {
-		System.err.println(text);
-		splash.error(textShort);
+		if (text != null) {
+			System.err.println(text);
+		}
+		if (textShort != null) {
+			splash.error(textShort);
+		}
 	}
 
 	void start() throws IOException {
@@ -245,7 +300,7 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 		if (!launchAnyway) {
 			t.printStackTrace(System.err);
 		}
-		if ( launchAnyway ) {
+		if (launchAnyway) {
 			message("Update failed!", "Update failed: " + t.getMessage());
 		} else {
 			error("Update failed!", "Update failed: " + t.getMessage());

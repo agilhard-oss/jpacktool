@@ -27,6 +27,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.update4j.Configuration;
 import org.update4j.LaunchContext;
@@ -87,15 +89,20 @@ public class JPacktoolLauncher implements Launcher {
             this.args.add(argument);
         }
 
+        // use TreeMap to sort
+        Map<String,String> argMap=new TreeMap<>();
         context.getConfiguration().getResolvedProperties().entrySet().stream().forEach(e -> {
             final String pfx = ARGUMENT_PROPERTY_KEY + ".";
             // starts with but not equals, to filter missing <name> part
             if (e.getKey().startsWith(pfx) && !e.getKey().equals(pfx)) {
-                final String key = e.getKey().substring(pfx.length());
-                this.args.add(e.getValue());
+				String key = e.getKey().substring(pfx.length());
+            	argMap.put(key, e.getValue());
             }
         });
-
+        argMap.entrySet().stream().forEach(e -> {
+				this.args.add(e.getValue());
+        });
+        
         final String[] argsArray = this.args.toArray(new String[this.args.size()]);
 
         context.getConfiguration().getResolvedProperties().entrySet().stream().forEach(e -> {
