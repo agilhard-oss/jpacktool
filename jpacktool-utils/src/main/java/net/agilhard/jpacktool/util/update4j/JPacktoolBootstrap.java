@@ -29,7 +29,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -48,92 +48,147 @@ import net.agilhard.jpacktool.util.splash.SplashScreenHelper;
 public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 
 	private SplashScreenHelper splash;
+	private List<String> businessArgs;
+	private String businessBaseUri;
+	private String projectConfigName;
+	private boolean updateFailed;
+	private boolean launchAnyway;
 
 	public JPacktoolBootstrap() {
-        splash = SplashScreenHelper.getInstance();
+		splash = SplashScreenHelper.getInstance();
 	}
 
 	public static void main(String[] args) throws Throwable {
 		JPacktoolBootstrap app = new JPacktoolBootstrap();
 		app.main(Arrays.asList(args));
 	}
-	
-	@Override
-	public void main(List<String> args) throws Throwable {
-		File propsFile = new File(new File("conf"),"jpacktool.properties");
-		if ( ! propsFile.exists() ) {
-			error("Properties file not found!");
-			throw new FileNotFoundException("conf/jpacktool.properties");
+
+	private String getOpt(String arg) {
+		int i = arg.indexOf(":");
+		if ((i < 0) || (i + 1 >= arg.length())) {
+			return null;
 		}
-		Properties props = new Properties();
-		try ( FileInputStream inStream = new FileInputStream(propsFile) ) {
-			props.load(inStream);
-		} catch (IOException ioe ) {
-			error("I/O error reading properties file!");
-		}
-		String projectConfigName=props.getProperty("projectConfigName");
-		String businessBaseUri=props.getProperty("businessBaseUri");
-		if ( (projectConfigName == null) || (businessBaseUri == null) ) {
-			error("Needed properties not found!");
-			return;
-		}
-		start(businessBaseUri, projectConfigName);
+		return arg.substring(i + 1);
 	}
 
-	
+	/**
+	 * Parse Arguments and add unknown args to businessArgs list;
+	 */
+	public void parseArguments(List<String> args) {
+		businessArgs = new ArrayList<String>();
+		for (String arg : args) {
+
+			if (arg.startsWith("-uri:")) {
+				businessBaseUri = getOpt(arg);
+			} else if (arg.startsWith("-config:")) {
+				projectConfigName = getOpt(arg);
+			} else if ("-launchAnyway".equals(arg)) {
+				launchAnyway = true;
+			} else {
+				businessArgs.add(arg);
+			}
+		}
+	}
+
+	@Override
+	public void main(List<String> args) throws Throwable {
+
+		parseArguments(args);
+
+		File propsFile = new File(new File("conf"), "jpacktool.properties");
+
+		Properties props = null;
+
+		if (!propsFile.exists() && ((businessBaseUri == null) || (projectConfigName == null))) {
+			error("Properties file not found!");
+			throw new FileNotFoundException("conf/jpacktool.properties");
+		} else {
+			props = new Properties();
+		}
+
+		if (props != null) {
+
+			try (FileInputStream inStream = new FileInputStream(propsFile)) {
+				props.load(inStream);
+			} catch (IOException ioe) {
+				error("I/O error reading properties file!");
+			}
+
+			if (projectConfigName == null) {
+				projectConfigName = props.getProperty("projectConfigName");
+			}
+			if (businessBaseUri == null) {
+				businessBaseUri = props.getProperty("businessBaseUri");
+			}
+
+			if ((projectConfigName == null) || (businessBaseUri == null)) {
+				error("Needed properties not found!");
+				return;
+			}
+		}
+
+		System.out.println("uri=" + businessBaseUri);
+		System.out.println("config=" + projectConfigName);
+
+		start();
+
+	}
+
 	public void message(String text) {
 		System.out.println(text);
 		splash.setMessage(text);
 	}
-	
+
 	public void message(String textShort, String text) {
 		System.out.println(text);
 		splash.setMessage(textShort);
 	}
-	
+
 	public void error(String text) {
 		System.err.println(text);
 		splash.error(text);
 	}
+
 	public void error(String textShort, String text) {
 		System.err.println(text);
 		splash.error(textShort);
 	}
-	
-	void start(String baseUri, String configName) throws IOException {
-		
+
+	void start() throws IOException {
+
 		URL configUrl;
 		try {
-			configUrl = new URL(baseUri+"/"+configName);
+			configUrl = new URL(businessBaseUri + "/" + projectConfigName);
 		} catch (MalformedURLException e1) {
 			return;
 		}
-		
+
 		Configuration config = null;
 		try (Reader in = new InputStreamReader(configUrl.openStream(), StandardCharsets.UTF_8)) {
 			config = Configuration.read(in);
 		} catch (IOException e) {
-			message("Could not load remote config, falling back to local.", "Could not load remote config "+configUrl.toString()+", falling back to local");
+			message("Could not load remote config, falling back to local.",
+					"Could not load remote config " + configUrl.toString() + ", falling back to local");
 			File confDir = new File("conf");
-			if ( ! confDir.isDirectory()  ) {
+			if (!confDir.isDirectory()) {
 				error("Directory \"conf\" does not exist or is not a directory.");
 				return;
 			}
-			Path path = confDir.toPath().resolve(configName);
+			Path path = confDir.toPath().resolve(projectConfigName);
 			try (Reader in = Files.newBufferedReader(path)) {
 				config = Configuration.read(in);
 			} catch (IOException ioe) {
-				error("Could not read local config.", "Could not read local config "+path.toString());
+				error("Could not read local config.", "Could not read local config " + path.toString());
 				throw ioe;
 			}
 		}
-		
+
 		message("Checking if update is required");
-		
+
 		try {
-			if ( config.requiresUpdate()) {
+			if (config.requiresUpdate()) {
 				message("Updating application ...");
-				config.update((UpdateHandler)this);
+				config.update((UpdateHandler) this);
 			} else {
 				message("No update required.");
 			}
@@ -141,17 +196,20 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 			error("I/O error while checking for update");
 			throw ioe;
 		}
-		
-		message("Launching application ...");
-		Launcher launcher = new JPacktoolLauncher();
-		config.launch(launcher);
+
+		if ((!updateFailed) || launchAnyway) {
+			message("Launching application ...");
+
+			JPacktoolLauncher launcher = new JPacktoolLauncher(businessArgs);
+
+			config.launch(launcher);
+		}
 	}
 
-	
 	public void startCheckUpdates() throws Throwable {
 		message("Starting to check for updates ...");
 	}
-	
+
 	/**
 	 * Called on each file before any check is performed.
 	 * 
@@ -162,29 +220,36 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 	 * called.
 	 */
 	public boolean startCheckUpdateFile(FileMetadata file) throws Throwable {
-		message("Checking "+file.getPath().getFileName(),"Checking "+file.getPath().toString());
+		message("Checking " + file.getPath().getFileName(), "Checking " + file.getPath().toString());
 		return true;
 	}
-	
+
 	public void doneCheckUpdates() throws Throwable {
 		message("... done checking for updates");
 	}
-	
+
 	public void startDownloads() throws Throwable {
 		message("Start downloading ...");
 	}
-	
+
 	public void startDownloadFile(FileMetadata file) throws Throwable {
-		message("Downloading "+file.getPath().getFileName(),"Downloading "+file.getPath().toString());
+		message("Downloading " + file.getPath().getFileName(), "Downloading " + file.getPath().toString());
 	}
-	
+
 	public void doneDownloads() throws Throwable {
 		message("Download finished.");
 	}
 
 	public void failed(Throwable t) {
-		//t.printStackTrace(System.err);
-		error("Update failed!", "Update failed: "+t.getMessage());
+		updateFailed = true;
+		if (!launchAnyway) {
+			t.printStackTrace(System.err);
+		}
+		if ( launchAnyway ) {
+			message("Update failed!", "Update failed: " + t.getMessage());
+		} else {
+			error("Update failed!", "Update failed: " + t.getMessage());
+		}
 	}
 
 	public void succeeded() {

@@ -54,6 +54,7 @@ public class JPacktoolLauncher implements Launcher {
 
     public JPacktoolLauncher(final List<String> args) {
         this.args = args;
+        this.splashScreenHelper = SplashScreenHelper.getInstance();
     }
 
     public void illegalState(final String message) {
