@@ -468,7 +468,7 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 			for (final String s : this.addModules) {
 				sb.append("              <addModule>");
 				sb.append(s);
-				sb.append("</addModules>\n");
+				sb.append("</addModule>\n");
 			}
 			this.jpacktoolModel.put("addModulesXML", sb.toString());
 		}

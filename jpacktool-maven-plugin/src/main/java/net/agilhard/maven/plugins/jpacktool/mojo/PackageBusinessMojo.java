@@ -104,7 +104,7 @@ public class PackageBusinessMojo extends AbstractToolMojo {
     /**
      * replace this with nothing in the name of the config file
      */
-	@Parameter(required = false, readonly = false)
+	@Parameter(required = false, readonly = false, defaultValue = "-jpacktool")
 	protected String stripConfigName;
 
 

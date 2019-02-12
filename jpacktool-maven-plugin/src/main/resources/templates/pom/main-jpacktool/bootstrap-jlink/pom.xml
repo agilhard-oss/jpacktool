@@ -109,8 +109,8 @@ ${limitModulesXML}
 </#if>
 <#if addModulesXML??>
 		  <addModules>
-${jvmArgsXML}
-		  </addModulesXML>
+${addModulesXML}
+		  </addModules>
 </#if>
 <#if outputDirectoryImage??>
       	  <outputDirectoryImage>${outputDirectoryImage}</outputDirectoryImage>

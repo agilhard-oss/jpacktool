@@ -62,19 +62,19 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 	public void main(List<String> args) throws Throwable {
 		File propsFile = new File(new File("conf"),"jpacktool.properties");
 		if ( ! propsFile.exists() ) {
-			error("properties file not found");
+			error("Properties file not found!");
 			throw new FileNotFoundException("conf/jpacktool.properties");
 		}
 		Properties props = new Properties();
 		try ( FileInputStream inStream = new FileInputStream(propsFile) ) {
 			props.load(inStream);
 		} catch (IOException ioe ) {
-			error("I/O error reading properties file");
+			error("I/O error reading properties file!");
 		}
 		String projectConfigName=props.getProperty("projectConfigName");
 		String businessBaseUri=props.getProperty("businessBaseUri");
 		if ( (projectConfigName == null) || (businessBaseUri == null) ) {
-			error("needed properties not found");
+			error("Needed properties not found!");
 			return;
 		}
 		start(businessBaseUri, projectConfigName);
@@ -84,6 +84,11 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 	public void message(String text) {
 		System.out.println(text);
 		splash.setMessage(text);
+	}
+	
+	public void message(String textShort, String text) {
+		System.out.println(text);
+		splash.setMessage(textShort);
 	}
 	
 	public void error(String text) {
@@ -108,46 +113,43 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 		try (Reader in = new InputStreamReader(configUrl.openStream(), StandardCharsets.UTF_8)) {
 			config = Configuration.read(in);
 		} catch (IOException e) {
-			message("Could not load remote config, falling back to local.");
+			message("Could not load remote config, falling back to local.", "Could not load remote config "+configUrl.toString()+", falling back to local");
 			File confDir = new File("conf");
 			if ( ! confDir.isDirectory()  ) {
-				error("conf is not a directory");
+				error("Directory \"conf\" does not exist or is not a directory.");
 				return;
 			}
 			Path path = confDir.toPath().resolve(configName);
-			message("marke1: "+path.toFile().getAbsolutePath());
 			try (Reader in = Files.newBufferedReader(path)) {
 				config = Configuration.read(in);
-				message("marke2");
-
 			} catch (IOException ioe) {
-				error("could not read local config");
+				error("Could not read local config.", "Could not read local config "+path.toString());
 				throw ioe;
 			}
 		}
 		
-		message("checking if update is required");
+		message("Checking if update is required");
 		
 		try {
 			if ( config.requiresUpdate()) {
-				message("updating application ...");
+				message("Updating application ...");
 				config.update((UpdateHandler)this);
 			} else {
-				message("no update required");
+				message("No update required.");
 			}
 		} catch (IOException ioe) {
 			error("I/O error while checking for update");
 			throw ioe;
 		}
 		
-		message("launching ...");
+		message("Launching application ...");
 		Launcher launcher = new JPacktoolLauncher();
 		config.launch(launcher);
 	}
 
 	
 	public void startCheckUpdates() throws Throwable {
-		message("starting to check for updates ...");
+		message("Starting to check for updates ...");
 	}
 	
 	/**
@@ -160,7 +162,7 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 	 * called.
 	 */
 	public boolean startCheckUpdateFile(FileMetadata file) throws Throwable {
-		message("checking "+file.getPath());
+		message("Checking "+file.getPath().getFileName(),"Checking "+file.getPath().toString());
 		return true;
 	}
 	
@@ -169,23 +171,24 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 	}
 	
 	public void startDownloads() throws Throwable {
-		message("start downloading ...");
+		message("Start downloading ...");
 	}
 	
 	public void startDownloadFile(FileMetadata file) throws Throwable {
-		message("downloading "+file.getPath());
+		message("Downloading "+file.getPath().getFileName(),"Downloading "+file.getPath().toString());
 	}
 	
 	public void doneDownloads() throws Throwable {
+		message("Download finished.");
 	}
 
 	public void failed(Throwable t) {
 		//t.printStackTrace(System.err);
-		error("update failed!", "update failed: "+t.getMessage());
+		error("Update failed!", "Update failed: "+t.getMessage());
 	}
 
 	public void succeeded() {
-		message("update succeeded!");
+		message("Update succeeded!");
 	}
 
 }
