@@ -34,6 +34,9 @@
 
         <configuration>
 	  		<verbose>true</verbose>
+<#if buildDirectory??>
+      	  <buildDirectory>${buildDirectory}</buildDirectory>
+</#if>
 <#if bootstrapBaseUri??>
 	  	    <baseUri>${r"${jpacktool.bootstrap.baseUri}"}</baseUri>
 </#if>
