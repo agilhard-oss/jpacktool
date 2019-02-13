@@ -69,6 +69,12 @@
         <extensions>true</extensions>
 
         <configuration>
+<#if bootstrapBasePathBelowUserDir??> 
+		<basePathBelowUserDir>${bootstrapBasePathBelowUserDir}</basePathBelowUserDir>     
+</#if>      
+<#if bootstrapBasePathBelowHomeDir??> 
+		<basePathBelowHomeDir>${bootstrapBasePathBelowHomeDir}</basePathBelowHomeDir>     
+</#if>         
 <#if buildDirectory??>        
       <buildDirectory>${buildDirectory}</buildDirectory> 
  </#if>      

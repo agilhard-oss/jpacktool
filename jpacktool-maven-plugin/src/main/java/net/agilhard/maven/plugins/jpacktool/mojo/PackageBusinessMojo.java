@@ -66,6 +66,12 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 	private boolean basePathBelowUserDir;
 
 	/**
+	 * Flag if the basePath setting is relativ to ${user.home}
+	 */
+	@Parameter(defaultValue = "false", required = false, readonly = false)
+	private boolean basePathBelowHomeDir;
+
+	/**
 	 * The Update4j basePath Setting for the Business Application.
 	 */
 	@Parameter(required = true, readonly = false)
@@ -150,7 +156,7 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 		if (this.generateUpdate4jConfig) {
 			if (this.baseUri != null && this.basePath != null) {
 
-				final Builder builder = Update4jHelper.createBuilder(this.baseUri, this.basePath, this.basePathBelowUserDir);
+				final Builder builder = Update4jHelper.createBuilder(this.baseUri, this.basePath, this.basePathBelowUserDir, this.basePathBelowHomeDir);
 
                 if (this.mainClass != null) {
                     builder.property(MAIN_CLASS_PROPERTY_KEY, this.mainClass);

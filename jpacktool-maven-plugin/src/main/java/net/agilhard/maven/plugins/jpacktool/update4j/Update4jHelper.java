@@ -90,12 +90,14 @@ public class Update4jHelper {
 		return builder;
 	}
 
-	public static Builder createBuilder(String baseUri, String basePath, boolean basePathBelowUserDir) {
+	public static Builder createBuilder(String baseUri, String basePath, boolean basePathBelowUserDir, boolean basePathBelowHomeDir) {
 		Builder builder = Configuration.builder();
 
 		builder.baseUri(baseUri);
 
-		if (basePathBelowUserDir) {
+		if (basePathBelowHomeDir) {
+			builder.basePath("${user.home}/" + basePath);
+		} else if (basePathBelowUserDir) {
 			builder.basePath("${user.dir}/" + basePath);
 		} else {
 			builder.basePath(basePath);

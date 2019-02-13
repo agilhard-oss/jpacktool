@@ -50,6 +50,12 @@
         <configuration>
            <packForBusinessApp>true</packForBusinessApp>
 	         <verbose>true</verbose>
+<#if businessBasePathBelowUserDir??> 
+		<basePathBelowUserDir>${businessBasePathBelowUserDir}</basePathBelowUserDir>     
+</#if>      
+<#if businessBasePathBelowHomeDir??> 
+		<basePathBelowHomeDir>${businessBasePathBelowHomeDir}</basePathBelowHomeDir>     
+</#if> 
 	         <baseUri>${r"${jpacktool.business.baseUri}"}</baseUri>
 	         <basePath>${r"${jpacktool.business.basePath}"}</basePath>
            <#if businessMainClass??>

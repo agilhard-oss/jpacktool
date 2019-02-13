@@ -274,9 +274,8 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 	 * {@link #doneCheckUpdateFile(FileMetadata, boolean)} will <em>not</em> be
 	 * called.
 	 */
-	public boolean startCheckUpdateFile(FileMetadata file) throws Throwable {
+	public void startCheckUpdateFile(FileMetadata file) throws Throwable {
 		message("Checking " + file.getPath().getFileName(), "Checking " + file.getPath().toString());
-		return true;
 	}
 
 	public void doneCheckUpdates() throws Throwable {

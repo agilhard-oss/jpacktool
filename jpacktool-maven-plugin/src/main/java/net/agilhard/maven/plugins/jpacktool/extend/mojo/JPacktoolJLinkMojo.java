@@ -60,6 +60,12 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 	private boolean basePathBelowUserDir;
 
 	/**
+	 * Flag if the basePath setting is relativ to ${user.home}
+	 */
+	@Parameter(defaultValue = "false", required = false, readonly = false)
+	private boolean basePathBelowHomeDir;
+	
+	/**
 	 * The update4j basePath
 	 */
 	@Parameter(required = false, readonly = false)
@@ -152,7 +158,7 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 				}
 
 				if ((basePath != null) && (baseUri != null)) {
-					Builder builder = Update4jHelper.createBuilder(baseUri, basePath, basePathBelowUserDir);
+					Builder builder = Update4jHelper.createBuilder(baseUri, basePath, basePathBelowUserDir, basePathBelowHomeDir);
 					try {
 						Update4jHelper.addToBuilder(builder, outputDirectory, "update");
 					} catch (MojoFailureException e) {

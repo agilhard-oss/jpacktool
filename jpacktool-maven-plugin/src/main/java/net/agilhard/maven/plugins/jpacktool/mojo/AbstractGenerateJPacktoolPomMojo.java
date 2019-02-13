@@ -116,6 +116,12 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 	protected boolean businessBasePathBelowUserDir;
 
 	/**
+	 * Flag if the businessBasePath setting is relativ to ${user.home}
+	 */
+	@Parameter(defaultValue = "false", required = false, readonly = false)
+	protected boolean businessBasePathBelowHomeDir;
+	
+	/**
 	 * The Update4j basePath Setting for the Business Application.
 	 */
 	@Parameter(required = true, readonly = false)
@@ -133,6 +139,13 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 	@Parameter(defaultValue = "true", required = false, readonly = false)
 	protected boolean bootstrapBasePathBelowUserDir;
 
+	/**
+	 * Flag if the bootstrapBasePath setting is relativ to ${user.home}
+	 */
+	@Parameter(defaultValue = "false", required = false, readonly = false)
+	protected boolean bootstrapBasePathBelowHomeDir;
+
+	
 	/**
 	 * The Update4j basePath Setting for the Bootstrap Application.
 	 */
@@ -391,10 +404,12 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 		this.jpacktoolModel.put("bootstrapGroupId", this.bootstrapGroupId);
 		this.jpacktoolModel.put("bootstrapArtifactId", this.bootstrapArtifactId);
 		this.jpacktoolModel.put("bootstrapVersion", this.bootstrapVersion);
-		this.jpacktoolModel.put("businessBasePathBelowUserDir", this.businessBasePathBelowUserDir);
+		this.jpacktoolModel.put("businessBasePathBelowUserDir", Boolean.valueOf(this.businessBasePathBelowUserDir).toString());
+		this.jpacktoolModel.put("businessBasePathBelowHomeDir", Boolean.valueOf(this.businessBasePathBelowHomeDir).toString());
 		this.jpacktoolModel.put("businessBasePath", this.businessBasePath);
 		this.jpacktoolModel.put("businessBaseUri", this.businessBaseUri);
-		this.jpacktoolModel.put("bootstrapBasePathBelowUserDir", this.bootstrapBasePathBelowUserDir);
+		this.jpacktoolModel.put("bootstrapBasePathBelowUserDir", Boolean.valueOf(this.bootstrapBasePathBelowUserDir).toString());
+		this.jpacktoolModel.put("bootstrapBasePathBelowHomeDir", Boolean.valueOf(this.bootstrapBasePathBelowHomeDir).toString());
 		this.jpacktoolModel.put("bootstrapMainClass", this.bootstrapMainClass);
 		this.jpacktoolModel.put("bootstrapMainModule", this.bootstrapMainModule);
 		this.jpacktoolModel.put("businessMainClass", this.businessMainClass);

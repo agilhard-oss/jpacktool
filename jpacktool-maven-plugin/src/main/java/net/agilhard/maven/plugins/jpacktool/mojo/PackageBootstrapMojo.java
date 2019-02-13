@@ -68,6 +68,12 @@ public class PackageBootstrapMojo extends AbstractToolMojo {
 	private boolean basePathBelowUserDir;
 
 	/**
+	 * Flag if the basePath setting is relativ to ${user.home}
+	 */
+	@Parameter(defaultValue = "false", required = false, readonly = false)
+	private boolean basePathBelowHomeDir;
+	
+	/**
 	 * The Update4j basePath Setting for the Business Application.
 	 */
 	@Parameter(required = false, readonly = false)
@@ -119,7 +125,7 @@ public class PackageBootstrapMojo extends AbstractToolMojo {
 		if (this.generateUpdate4jConfig) {
 
 			if ((this.baseUri != null) && (this.basePath != null)) {
-				final Builder builder = Update4jHelper.createBuilder(this.baseUri, this.basePath, this.basePathBelowUserDir);
+				final Builder builder = Update4jHelper.createBuilder(this.baseUri, this.basePath, this.basePathBelowUserDir, this.basePathBelowHomeDir);
 
 				for (final String jarOnClassPath : (List<String>) this.jpacktoolModel.get("jarsOnClassPath")) {
 					Update4jHelper.addToBuilder(builder, this.outputDirectoryClasspathJars, jarOnClassPath, true);
