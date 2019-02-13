@@ -50,6 +50,9 @@
         <configuration>
            <packForBusinessApp>true</packForBusinessApp>
 	         <verbose>true</verbose>
+<#if buildDirectory??>
+      	  <buildDirectory>${buildDirectory}</buildDirectory>
+</#if>
 <#if businessBasePathBelowUserDir??> 
 		<basePathBelowUserDir>${businessBasePathBelowUserDir}</basePathBelowUserDir>     
 </#if>      
