@@ -69,6 +69,15 @@
         <extensions>true</extensions>
 
         <configuration>
+<#if launcherTemplateScriptWindows??> 
+			<launcherTemplateScriptWindows>${launcherTemplateScriptWindows}</launcherTemplateScriptWindows>
+</#if>      
+<#if launcherTemplateScriptLinux??>
+			<launcherTemplateScriptLinux>${launcherTemplateScriptLinux}</launcherTemplateScriptLinux> 
+</#if>      
+<#if launcherTemplateScriptMac??>
+			<launcherTemplateScriptMac>${launcherTemplateScriptMac}</launcherTemplateScriptMac>
+</#if>      
 <#if bootstrapBasePathBelowUserDir??> 
 		<basePathBelowUserDir>${bootstrapBasePathBelowUserDir}</basePathBelowUserDir>     
 </#if>      

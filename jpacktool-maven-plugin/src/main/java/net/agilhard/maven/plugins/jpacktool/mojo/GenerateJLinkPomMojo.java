@@ -34,12 +34,31 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "jpacktool-generate-jlink", requiresDependencyResolution = ResolutionScope.NONE, defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresProject = true)
 public class GenerateJLinkPomMojo extends AbstractGenerateJPacktoolPomMojo {
 
+	
+	/**
+	 * Name of the script generated from launcherTemplate for linux
+	 */
+	@Parameter(defaultValue = "start.sh")
+	protected String launcherTemplateScriptWindows;
+
+	/**
+	 * Name of the script generated from launcherTemplate for linux
+	 */
+	@Parameter(defaultValue = "start.sh")
+	protected String launcherTemplateScriptMac;
+
+	/**
+	 * Name of the script generated from launcherTemplate for linux
+	 */
+	@Parameter(defaultValue = "start.sh")
+	protected String launcherTemplateScriptLinux;
+	
 	/***
 	 * The Template for generating the pom for a final JLink Step
 	 */
 	@Parameter(required = false, readonly = false, defaultValue = "resource:/templates/pom/main-jpacktool/bootstrap-jlink/pom.xml")
 	protected String templateBootstrapJLink;
-
+	
 	/**
 	 * The output directory for the resulting Run Time Image when packagingTool is
 	 * &quot;jlink&quot; The created Run Time Image is stored in non compressed
@@ -75,7 +94,18 @@ public class GenerateJLinkPomMojo extends AbstractGenerateJPacktoolPomMojo {
 		if (this.outputDirectoryImage != null) {
 			this.jpacktoolModel.put("outputDirectoryImage", this.outputDirectoryImage.getPath());
 		}
+		if ( launcherTemplateScriptWindows != null ) {
+			this.jpacktoolModel.put("launcherTemplateScriptWindows", launcherTemplateScriptWindows);
+		}
+		if ( launcherTemplateScriptLinux != null ) {
+			this.jpacktoolModel.put("launcherTemplateScriptLinux", launcherTemplateScriptLinux);
+		}
+		if ( launcherTemplateScriptMac != null ) {
+			this.jpacktoolModel.put("launcherTemplateScriptMac", launcherTemplateScriptMac);
+		}
 
+		
+		
 	}
 
 }
