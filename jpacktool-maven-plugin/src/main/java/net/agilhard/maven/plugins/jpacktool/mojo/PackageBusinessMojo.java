@@ -130,6 +130,36 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 
 		this.initJPacktoolModel();
 
+		// use java nio instead of File.mkdirs to work around java mkdirs() problems on windows
+		if (! this.getOutputDirectoryJPacktool().exists()) {
+			try {
+				Files.createDirectories(this.getOutputDirectoryJPacktool().toPath());
+			} catch (IOException e) {
+				throw new MojoFailureException("can not create directory: "+getOutputDirectoryJPacktool().getAbsolutePath());
+			}
+		}
+		if (! this.outputDirectoryClasspathJars.exists()) {
+			try {
+				Files.createDirectories(this.outputDirectoryClasspathJars.toPath());
+			} catch (IOException e) {
+				throw new MojoFailureException("can not create directory: "+outputDirectoryClasspathJars.getAbsolutePath());
+			}
+		}
+		if (this.outputDirectoryModules.exists()) {
+			try {
+				Files.createDirectories(this.outputDirectoryModules.toPath());
+			} catch (IOException e) {
+				throw new MojoFailureException("can not create directory: "+outputDirectoryModules.getAbsolutePath());
+			}
+		}
+		if (! this.outputDirectoryAutomaticJars.exists()) {
+			try {
+				Files.createDirectories(this.outputDirectoryAutomaticJars.toPath());
+			} catch (IOException e) {
+				throw new MojoFailureException("can not create directory: "+outputDirectoryAutomaticJars.getAbsolutePath());
+			}
+		}
+		
 		this.publishJPacktoolProperties();
 
 		// keep the .jdeps Files and java_modules.list if debug is enabled
