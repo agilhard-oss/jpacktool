@@ -47,7 +47,7 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 	/**
 	 * Directory where the maven pom.xml generated are written to.
 	 */
-	@Parameter(defaultValue = "${project.build.directory}/maven-jpacktool/build", required = true, readonly = true)
+	@Parameter(defaultValue = "${project.build.directory}/jpacktool/build", required = true, readonly = true)
 	protected File outputDirectoryBuild;
 
 	/**
@@ -492,7 +492,7 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 		if (this.stripConfigName != null) {
 			artName = artName.replaceAll(this.stripConfigName, "");
 		}
-		String projectConfigName = "update4j_" + this.projectGroupId + "_" + artName + "-business.xml";
+		String projectConfigName = "update4j_" + artName + "-business.xml";
 		this.jpacktoolModel.put("projectConfigName", projectConfigName);
 		String jlinkConfigName = "update4j_" + this.projectGroupId + "_" + artName + "-jlink.xml";
 		this.jpacktoolModel.put("jlinkConfigName", jlinkConfigName);

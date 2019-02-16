@@ -72,21 +72,22 @@ public class Update4jHelper {
 	public static Builder addToBuilder(Builder builder, File dir, Boolean classpath) throws MojoFailureException {
 
 		String subdir = dir.getName();
-
-		try (final Stream<Path> pathStream = Files.walk(dir.toPath(), FileVisitOption.FOLLOW_LINKS)) {
-			pathStream.filter((p) -> !p.toFile().isDirectory()).forEach(p -> {
-				String name = p.getFileName().toString();
-				String sp = subdir + "/" + name;
-				if (classpath) {
-					builder.file(FileMetadata.readFrom(p).path(sp).classpath().ignoreBootConflict());
-				} else {
-					builder.file(FileMetadata.readFrom(p).path(sp).modulepath().ignoreBootConflict());
-				}
-			});
-		} catch (final IOException e) {
-			throw new MojoFailureException("i/o error");
+		File subdirFile=new File(dir, subdir);
+		if ( subdirFile.exists() ) {
+			try (final Stream<Path> pathStream = Files.walk(dir.toPath(), FileVisitOption.FOLLOW_LINKS)) {
+				pathStream.filter((p) -> !p.toFile().isDirectory()).forEach(p -> {
+					String name = p.getFileName().toString();
+					String sp = subdir + "/" + name;
+					if (classpath) {
+						builder.file(FileMetadata.readFrom(p).path(sp).classpath().ignoreBootConflict());
+					} else {
+						builder.file(FileMetadata.readFrom(p).path(sp).modulepath().ignoreBootConflict());
+					}
+				});
+			} catch (final IOException e) {
+				throw new MojoFailureException("i/o error", e);
+			}
 		}
-
 		return builder;
 	}
 

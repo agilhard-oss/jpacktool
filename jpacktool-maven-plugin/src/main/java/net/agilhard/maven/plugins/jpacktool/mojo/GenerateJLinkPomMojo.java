@@ -66,7 +66,7 @@ public class GenerateJLinkPomMojo extends AbstractGenerateJPacktoolPomMojo {
 	 * <code>--output &lt;path&gt;</code>
 	 */
 	// TODO: is this a good final location?
-	@Parameter(defaultValue = "${project.build.directory}/maven-jlink", required = true, readonly = true)
+	@Parameter(defaultValue = "${project.build.directory}/jlink", required = true, readonly = true)
 	protected File outputDirectoryImage;
 
 	public GenerateJLinkPomMojo() {

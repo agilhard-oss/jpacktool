@@ -170,7 +170,7 @@ public class JPacktoolJLinkMojo extends JLinkMojo {
 						artName = artName.replaceAll(stripConfigName, "");
 					}
 					Path configPath = outputDirectory.toPath().resolve("conf")
-							.resolve("update4j_" + project.getGroupId() + "_" + artName + ".xml");
+							.resolve("update4j_" + artName + ".xml");
 
 					try (Writer out = Files.newBufferedWriter(configPath)) {
 						builder.build().write(out);

@@ -59,7 +59,7 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 public class InvokePomMojo extends AbstractMojo {
 
 	
-	@Parameter(defaultValue = "${project.build.directory}/maven-jpacktool/build", required = true, readonly = true)
+	@Parameter(defaultValue = "${project.build.directory}/jpacktool/build", required = true, readonly = true)
 	protected File outputDirectoryBuild;
 
 	/**
