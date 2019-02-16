@@ -304,7 +304,7 @@ public abstract class AbstractGenerateJPacktoolPomMojo extends AbstractTemplateT
 	/**
 	 * Name of the automatic-modules folder
 	 */
-	@Parameter(defaultValue = "jar_auto")
+	@Parameter(defaultValue = "autojar")
 	protected String automaticModulesFolderName;
 
 	/**

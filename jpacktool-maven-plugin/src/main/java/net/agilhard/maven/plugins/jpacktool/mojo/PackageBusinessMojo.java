@@ -42,7 +42,6 @@ import org.update4j.Configuration.Builder;
 import net.agilhard.maven.plugins.jpacktool.base.mojo.AbstractToolMojo;
 import net.agilhard.maven.plugins.jpacktool.update4j.Update4jHelper;
 
-
 /**
  * Package a Business Application started from a Bootstrap Application.
  *
@@ -83,36 +82,33 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 	@Parameter(required = true, readonly = false)
 	protected String baseUri;
 
-    /**
-     * Flag whether to generate an update4j config file.
-     */
+	/**
+	 * Flag whether to generate an update4j config file.
+	 */
 	@Parameter(required = false, readonly = false, defaultValue = "true")
 	protected boolean generateUpdate4jConfig;
 
 	/**
-     * The main class.
-     */
+	 * The main class.
+	 */
 	@Parameter(required = false, readonly = false)
-    protected String mainClass;
+	protected String mainClass;
 
+	/**
+	 * Command line arguments for the business application to pass to the main class
+	 * if no arguments are specified by the launcher.
+	 * <p>
+	 * This sets properties in the update4j config to be picked up by the launcher.
+	 * </p>
+	 */
+	@Parameter(required = false, readonly = false)
+	protected List<String> arguments;
 
-    /**
-     * Command line arguments for the business application to pass to the main class if no arguments are
-     * specified by the launcher.
-     * <p>
-     * This sets properties in the update4j config to be picked up by the launcher.
-     * </p>
-     */
-    @Parameter(required = false, readonly = false)
-    protected List<String> arguments;
-
-
-    /**
-     * replace this with nothing in the name of the config file
-     */
+	/**
+	 * replace this with nothing in the name of the config file
+	 */
 	@Parameter(required = false, readonly = false, defaultValue = "-jpacktool")
 	protected String stripConfigName;
-
 
 	public PackageBusinessMojo() {
 		super();
@@ -123,43 +119,43 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 	 */
 	protected boolean jpacktoolPrepareUsed;
 
-
-    @SuppressWarnings({ "unchecked", "boxing" })
+	@SuppressWarnings({ "unchecked", "boxing" })
 	@Override
 	public void executeToolMain() throws MojoExecutionException, MojoFailureException {
 
 		this.initJPacktoolModel();
 
-		// use java nio instead of File.mkdirs to work around java mkdirs() problems on windows
-		if (! this.getOutputDirectoryJPacktool().exists()) {
-			try {
-				Files.createDirectories(this.getOutputDirectoryJPacktool().toPath());
-			} catch (IOException e) {
-				throw new MojoFailureException("can not create directory: "+getOutputDirectoryJPacktool().getAbsolutePath());
+		if (!this.getOutputDirectoryJPacktool().exists()) {
+			if (!getOutputDirectoryJPacktool().mkdirs()) {
+				throw new MojoFailureException(
+						"can not create directory: " + getOutputDirectoryJPacktool().getAbsolutePath());
 			}
 		}
-		if (! this.outputDirectoryClasspathJars.exists()) {
-			try {
-				Files.createDirectories(this.outputDirectoryClasspathJars.toPath());
-			} catch (IOException e) {
-				throw new MojoFailureException("can not create directory: "+outputDirectoryClasspathJars.getAbsolutePath());
+		if (!this.outputDirectoryClasspathJars.exists()) {
+			if (!outputDirectoryClasspathJars.mkdirs()) {
+				throw new MojoFailureException(
+						"can not create directory: " + outputDirectoryClasspathJars.getAbsolutePath());
 			}
 		}
-		if (this.outputDirectoryModules.exists()) {
-			try {
-				Files.createDirectories(this.outputDirectoryModules.toPath());
-			} catch (IOException e) {
-				throw new MojoFailureException("can not create directory: "+outputDirectoryModules.getAbsolutePath());
+		if (!this.outputDirectoryModules.exists()) {
+			if (!outputDirectoryModules.mkdirs()) {
+				throw new MojoFailureException("can not create directory: " + outputDirectoryModules.getAbsolutePath());
 			}
 		}
-		if (! this.outputDirectoryAutomaticJars.exists()) {
-			try {
-				Files.createDirectories(this.outputDirectoryAutomaticJars.toPath());
-			} catch (IOException e) {
-				throw new MojoFailureException("can not create directory: "+outputDirectoryAutomaticJars.getAbsolutePath());
+		if (!this.outputDirectoryAutomaticJars.exists()) {
+			if (!outputDirectoryAutomaticJars.mkdirs()) {
+				throw new MojoFailureException(
+						"can not create directory: " + outputDirectoryAutomaticJars.getAbsolutePath());
 			}
+			try {
+				Thread.currentThread().sleep(15000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
-		
+
 		this.publishJPacktoolProperties();
 
 		// keep the .jdeps Files and java_modules.list if debug is enabled
@@ -186,23 +182,24 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 		if (this.generateUpdate4jConfig) {
 			if (this.baseUri != null && this.basePath != null) {
 
-				final Builder builder = Update4jHelper.createBuilder(this.baseUri, this.basePath, this.basePathBelowUserDir, this.basePathBelowHomeDir);
+				final Builder builder = Update4jHelper.createBuilder(this.baseUri, this.basePath,
+						this.basePathBelowUserDir, this.basePathBelowHomeDir);
 
-                if (this.mainClass != null) {
-                    builder.property(MAIN_CLASS_PROPERTY_KEY, this.mainClass);
-                }
+				if (this.mainClass != null) {
+					builder.property(MAIN_CLASS_PROPERTY_KEY, this.mainClass);
+				}
 
-                if ((this.arguments != null) && (this.arguments.size() > 0)) {
-                    int i = 1;
-                    for (final String arg : this.arguments) {
-                        if (i == 1) {
-                            builder.property(ARGUMENT_PROPERTY_KEY, arg);
-                        } else {
-                            builder.property(ARGUMENT_PROPERTY_KEY + "." + i, arg);
-                        }
-                        i++;
-                    }
-                }
+				if ((this.arguments != null) && (this.arguments.size() > 0)) {
+					int i = 1;
+					for (final String arg : this.arguments) {
+						if (i == 1) {
+							builder.property(ARGUMENT_PROPERTY_KEY, arg);
+						} else {
+							builder.property(ARGUMENT_PROPERTY_KEY + "." + i, arg);
+						}
+						i++;
+					}
+				}
 
 				for (final String jarOnClassPath : (List<String>) this.jpacktoolModel.get("jarsOnClassPath")) {
 					Update4jHelper.addToBuilder(builder, this.outputDirectoryClasspathJars, jarOnClassPath, true);
@@ -220,10 +217,8 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 					artName = artName.replaceAll(this.stripConfigName, "");
 				}
 
-				configPath = this.outputDirectoryJPacktool.toPath()
-						.resolve("update4j_" + artName + ".xml");
-				
-				
+				configPath = this.outputDirectoryJPacktool.toPath().resolve("update4j_" + artName + ".xml");
+
 				try (Writer out = Files.newBufferedWriter(configPath)) {
 					builder.build().write(out);
 				} catch (final IOException e) {
@@ -264,7 +259,7 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 	}
 
 	@Override
-    public String getFinalName() {
+	public String getFinalName() {
 		return this.finalName;
 	}
 }

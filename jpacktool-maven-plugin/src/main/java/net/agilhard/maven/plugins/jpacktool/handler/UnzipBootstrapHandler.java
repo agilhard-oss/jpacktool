@@ -124,18 +124,8 @@ public class UnzipBootstrapHandler extends AbstractEndVisitDependencyHandler {
 				f.delete();
 			}
 		}
-		for (File f : fileList) {
-			if (f.isDirectory()) {
-				try {
-					if (!Files.list(f.toPath()).findAny().isPresent()) {
-						getLog().debug("delete empty directory "+f.getAbsolutePath());
-						Files.delete(f.toPath());
-					}
-				} catch (IOException e) {
-					throw new MojoExecutionException("i/o error:", e);
-				}
-			}
-		}
+		
+		// do not delete empty directory here it makes problems on Windows afterwards
 
 	}
 }
