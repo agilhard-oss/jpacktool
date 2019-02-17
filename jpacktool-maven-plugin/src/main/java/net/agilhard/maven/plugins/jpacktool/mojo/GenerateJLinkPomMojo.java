@@ -36,13 +36,13 @@ public class GenerateJLinkPomMojo extends AbstractGenerateJPacktoolPomMojo {
 
 	
 	/**
-	 * Name of the script generated from launcherTemplate for linux
+	 * Name of the script generated from launcherTemplate for windows
 	 */
-	@Parameter(defaultValue = "start.sh")
+	@Parameter(defaultValue = "start.ps1")
 	protected String launcherTemplateScriptWindows;
 
 	/**
-	 * Name of the script generated from launcherTemplate for linux
+	 * Name of the script generated from launcherTemplate for mac
 	 */
 	@Parameter(defaultValue = "start.sh")
 	protected String launcherTemplateScriptMac;
