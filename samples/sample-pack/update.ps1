@@ -12,7 +12,8 @@ write-output "Dest=$($Dest)";
 
 [string]$ScriptDir = Split-Path $script:MyInvocation.MyCommand.Path
  
- Add-Type -AssemblyName System.IO.Compression.FileSystem
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+#Add-Type -Path C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.IO.Compression.FileSystem\v4.0_4.0.0.0__b77a5c561934e089\System.IO.Compression.FileSystem.dll
 
 function usage
 {
@@ -33,12 +34,12 @@ function Unzip
     if ( $t ) {
         rm -r -fo $($outpath);
      }
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+#    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
 }
 
 function Update
 {
-[string]$BaseUrl = "http://" + $($server) + ":" + $($port) + "/" + $($app) + "/bootstrap";
+[string]$BaseUrl = "http://" + $($server) + ":" + $($port) + "/" + $($app) + "/bootstrap/windows";
 write-output "BaseURL=$($BaseUrl)";
 
 
@@ -123,7 +124,7 @@ $ShortCut.TargetPath="%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.ex
 $ShortCut.Arguments="-WindowStyle Hidden -ExecutionPolicy Bypass -File $($ScriptDir)\$($ScriptName) `"-server`" `"$($server)`" `"-port`" `"$($port)`"";
 $ShortCut.WorkingDirectory = "$($Dest2)";
 $ShortCut.WindowStyle = 1;
-#$ShortCut.IconLocation = "yourexecutable.exe, 0";
+$ShortCut.IconLocation = "$($ScriptDir)\icon.ico";
 #$ShortCut.Description = "Your Custom Shortcut Description";
 $ShortCut.Save()
 }
@@ -149,4 +150,5 @@ Launch
 if ( $wait ) {
 $( Read-Host "Type anything to quit" );
 }
+
 
