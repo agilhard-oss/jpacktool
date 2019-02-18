@@ -43,10 +43,11 @@ public class Update4jHelper {
 
 		Path p = dir.toPath().resolve(name);
 		String sp = subdir + "/" + name;
+		String uri = "${baseUri}/" + subdir + "/" + name;
 
 		if (p.toFile().exists()) {
 			if (classpath) {
-				builder.file(FileMetadata.readFrom(p).path(sp).classpath().ignoreBootConflict());
+				builder.file(FileMetadata.readFrom(p).path(sp).uri(uri).classpath().ignoreBootConflict());
 			} else {
 				builder.file(FileMetadata.readFrom(p).path(sp).modulepath().ignoreBootConflict());
 			}

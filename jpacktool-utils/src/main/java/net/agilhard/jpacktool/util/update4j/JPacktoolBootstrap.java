@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -219,8 +220,12 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 		}
 
 		Configuration config = null;
+		
+		HashMap<String,String> map = new HashMap<>();
+		map.put("baseUri",businessBaseUri);
+		
 		try (Reader in = new InputStreamReader(configUrl.openStream(), StandardCharsets.UTF_8)) {
-			config = Configuration.read(in);
+			config = Configuration.read(in, map);
 		} catch (IOException e) {
 			message("Could not load remote config, falling back to local.",
 					"Could not load remote config " + configUrl.toString() + ", falling back to local");
@@ -231,13 +236,14 @@ public class JPacktoolBootstrap implements Delegate, UpdateHandler {
 			}
 			Path path = confDir.toPath().resolve(projectConfigName);
 			try (Reader in = Files.newBufferedReader(path)) {
-				config = Configuration.read(in);
+				config = Configuration.read(in, map);
 			} catch (IOException ioe) {
 				error("Could not read local config.", "Could not read local config " + path.toString());
 				throw ioe;
 			}
 		}
-
+		
+		
 		message("Checking if update is required");
 
 		try {

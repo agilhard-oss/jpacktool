@@ -185,6 +185,8 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 				final Builder builder = Update4jHelper.createBuilder(this.baseUri, this.basePath,
 						this.basePathBelowUserDir, this.basePathBelowHomeDir);
 
+				builder.property("baseUri", baseUri);
+				
 				if (this.mainClass != null) {
 					builder.property(MAIN_CLASS_PROPERTY_KEY, this.mainClass);
 				}
