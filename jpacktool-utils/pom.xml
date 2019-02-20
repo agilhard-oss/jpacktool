@@ -123,4 +123,23 @@
     </resources>
   </build>
 
+  <distributionManagement>
+    <repository>
+      <id>nexus-releases</id>
+      <name>Nexus Release Repository</name>
+      <url>http://hamapp5.fms.local:8081/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <name>Nexus Snapshot Repository</name>
+      <url>http://hamapp5.fms.local:8081/nexus/content/repositories/snapshots</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+    <site>
+      <id>agilhard.website</id>
+      <url>scm:git@github.com:agilhard-oss/agilhard-oss.github.io.git/${maven.site.path}</url>
+    </site>
+  </distributionManagement>
+
+
 </project>
