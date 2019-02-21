@@ -18,7 +18,7 @@ package net.agilhard.maven.plugins.jpacktool.mojo;
  * under the License.
  */
 
-import static org.update4j.service.DefaultLauncher.ARGUMENT_PROPERTY_KEY;
+import static org.update4j.service.DefaultLauncher.ARGUMENT_PROPERTY_KEY_PREFIX;
 import static org.update4j.service.DefaultLauncher.MAIN_CLASS_PROPERTY_KEY;
 
 import java.io.File;
@@ -195,9 +195,9 @@ public class PackageBusinessMojo extends AbstractToolMojo {
 					int i = 1;
 					for (final String arg : this.arguments) {
 						if (i == 1) {
-							builder.property(ARGUMENT_PROPERTY_KEY, arg);
+							builder.property(ARGUMENT_PROPERTY_KEY_PREFIX, arg);
 						} else {
-							builder.property(ARGUMENT_PROPERTY_KEY + "." + i, arg);
+							builder.property(ARGUMENT_PROPERTY_KEY_PREFIX + "." + i, arg);
 						}
 						i++;
 					}

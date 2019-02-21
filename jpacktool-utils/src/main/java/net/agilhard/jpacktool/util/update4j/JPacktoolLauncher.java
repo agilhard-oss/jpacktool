@@ -19,7 +19,7 @@ package net.agilhard.jpacktool.util.update4j;
  * under the License.
  */
 
-import static org.update4j.service.DefaultLauncher.ARGUMENT_PROPERTY_KEY;
+import static org.update4j.service.DefaultLauncher.ARGUMENT_PROPERTY_KEY_PREFIX;
 import static org.update4j.service.DefaultLauncher.MAIN_CLASS_PROPERTY_KEY;
 import static org.update4j.service.DefaultLauncher.SYSTEM_PROPERTY_KEY_PREFIX;
 
@@ -84,7 +84,7 @@ public class JPacktoolLauncher implements Launcher {
             this.args = new ArrayList<>();
         }
 
-        final String argument = context.getConfiguration().getResolvedProperty(ARGUMENT_PROPERTY_KEY);
+        final String argument = context.getConfiguration().getResolvedProperty(ARGUMENT_PROPERTY_KEY_PREFIX);
         if (argument != null) {
             this.args.add(argument);
         }
@@ -92,7 +92,7 @@ public class JPacktoolLauncher implements Launcher {
         // use TreeMap to sort
         Map<String,String> argMap=new TreeMap<>();
         context.getConfiguration().getResolvedProperties().entrySet().stream().forEach(e -> {
-            final String pfx = ARGUMENT_PROPERTY_KEY + ".";
+            final String pfx = ARGUMENT_PROPERTY_KEY_PREFIX + ".";
             // starts with but not equals, to filter missing <name> part
             if (e.getKey().startsWith(pfx) && !e.getKey().equals(pfx)) {
 				String key = e.getKey().substring(pfx.length());
