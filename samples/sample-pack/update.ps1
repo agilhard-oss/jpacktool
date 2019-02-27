@@ -1,25 +1,49 @@
-﻿ param (
-    [string]$app = "sample",
+﻿
+
+ param (
     [Parameter(Mandatory=$true)][string]$server,
     [Parameter(Mandatory=$true)][string]$port,
     [switch]$install = $false,
     [switch]$wait = $false,
-    [switch]$help = $false
+    [switch]$help = $false,
+    [Parameter(ValueFromRemainingArguments)][System.Collections.Arraylist]$launcherArguments
 )
 
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+Add-Type -AssemblyName PresentationFramework
+
+[string]$app = "sample"
+[string]$appname = "sample"
+[string]$icon = "sample.ico"
+
+[string]$os = "windows"
 [string]$Dest = $($HOME) + "\" + $($app) + "-runtime";
 write-output "Dest=$($Dest)";
 
+[string]$BaseUrl = "http://$($server):$($port)/$($app)/update/bootstrap/$($os)";
+[string]$BusinessBaseUri = "http://$($server):$($port)/$($app)/update/business/$($os)";
+  
 [string]$ScriptDir = Split-Path $script:MyInvocation.MyCommand.Path
  
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-#Add-Type -Path C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.IO.Compression.FileSystem\v4.0_4.0.0.0__b77a5c561934e089\System.IO.Compression.FileSystem.dll
-
 function usage
 {
     write-output ""
     write-output "usage:"
-    write-output "update.ps1 -server <server> -port <port> [-install] [-wait] [-h]"
+    write-output "update.ps1 -server <server> -port <port> [<additionalLauncherArguments>] [-install] [-wait] [-h]"
+    Exit
+}
+
+function error_message
+{
+    param([string]$msg)
+    [System.Windows.MessageBox]::Show($($msg), 'Error!', 'OK', 'ERROR')
+}
+
+function fail_and_exit
+{
+    param([string]$msg)
+    write-output $($msg)
+    error_message $($msg)
     Exit
 }
 
@@ -33,14 +57,18 @@ function Unzip
     $t = Test-Path $outpath;
     if ( $t ) {
         rm -r -fo $($outpath);
-     }
-#    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+    }
+
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+#   Start-Process -FilePath "$($ScriptDir)\unzip.exe" -ArgumentList "-q -d $($outpath) $($zipfile)" -WindowStyle Hidden -PassThru
 }
 
 function Update
 {
-[string]$BaseUrl = "http://" + $($server) + ":" + $($port) + "/" + $($app) + "/bootstrap/windows";
+       
+
 write-output "BaseURL=$($BaseUrl)";
+write-output "BusinessBaseUri=$($BusinessBaseUri)";
 
 
 [string]$ScriptDir = Split-Path $script:MyInvocation.MyCommand.Path
@@ -54,8 +82,7 @@ write-output "downloading $($url) to $($output)";
  Try {
  $wc.DownloadFile($($url), $($output))
 } Catch {
-    write-output "Error downloading file $($output)";
-    Exit
+    fail_and_exit "Error downloading file $($url)";
 }
 
 $sha = Get-Content -Path $output
@@ -86,17 +113,17 @@ write-output "downloading $($url) to $($output2)";
 Try {
  $wc.DownloadFile($($url), $($output2))
 } Catch {
-    write-output "Error downloading file $($output2)";
-    Exit
+    fail_and_exit "Error downloading file $($url)";
 }
 
 $hashFromFile = Get-FileHash $($output2)
 
 if ( $hashFromFile.hash -ne $sha ) {
-    write-output "hash values differ";
-    write-output "expected: $sha";
-    write-output "     got: $($hashFromFile.hash)";
-    Exit
+
+    rm -r -fo $($output)
+    rm -r -fo $($output2)
+
+    fail_and_exit "hash values differ\r\nexpected: $($sha)\r\n     got: $($hashFromFile.hash)";
 } else {
     write-output "SHA Hash Values matches: $sha"; 
 }
@@ -105,9 +132,15 @@ Unzip $($output2) $($Dest)
 
 cp $($output) $($Check)
 
+rm -r -fo $($output)
+rm -r -fo $($output2)
+
 } else {
 
     write-output "No Runtime Update required"
+
+    rm -r -fo $($output)
+
 
 }
 }
@@ -116,16 +149,33 @@ function Install
 {
 [string]$ScriptName=$script:MyInvocation.MyCommand.Name
 [string]$Starter="$($ScriptDir)\${ScriptName}";
+
+[string]$Desktop=[Environment]::GetFolderPath("Desktop")
+
 write-output "Starter=$($Starter)"
+write-output "Desktop=$($Desktop)"
 	
 $Shell = New-Object -ComObject ("WScript.Shell")
-$ShortCut = $Shell.CreateShortcut($env:USERPROFILE + "\Desktop\$($app).lnk")
+[string]$lnkname="$($appname)"
+
+$ShortCut = $Shell.CreateShortcut("$($Desktop)\$($lnkname).lnk")
+
 $ShortCut.TargetPath="%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe"
-$ShortCut.Arguments="-WindowStyle Hidden -ExecutionPolicy Bypass -File $($ScriptDir)\$($ScriptName) `"-server`" `"$($server)`" `"-port`" `"$($port)`"";
+$q=""
+foreach ($arg in $launcherArguments ) {
+	if ( $q -eq "" ) {
+	   $q="`"$($arg)`""
+	} else {
+	   $q="$($q) `"$($arg)`""
+	}
+}
+
+$ShortCut.Arguments="-WindowStyle Hidden -ExecutionPolicy Bypass -File $($ScriptDir)\$($ScriptName) `"-server`" `"$($server)`" `"-port`" `"$($port)`"  $($q)";
+
 $ShortCut.WorkingDirectory = "$($Dest2)";
 $ShortCut.WindowStyle = 1;
-$ShortCut.IconLocation = "$($ScriptDir)\icon.ico";
-#$ShortCut.Description = "Your Custom Shortcut Description";
+$ShortCut.IconLocation = "$($ScriptDir)\$($icon)";
+$ShortCut.Description = "$($appname)";
 $ShortCut.Save()
 }
 
@@ -133,9 +183,8 @@ $ShortCut.Save()
 function Launch
 {
     cd $($Dest)
-    
-    Start-Process -FilePath bin\java -ArgumentList "--module-path app\jar_auto -splash:conf\splash.gif net.agilhard.jpacktool.util.update4j.JPacktoolBootstrap  $args" -WindowStyle Hidden -PassThru
 
+    Start-Process -FilePath bin\java -ArgumentList "-Xmx756m --module-path app\jar_auto -splash:conf\splash.gif net.agilhard.jpacktool.util.update4j.JPacktoolBootstrap -conf:update4j_seastep-main-gui-business.xml -uri:$($BusinessBaseUri) $($launcherArguments)"  -WindowStyle Hidden -PassThru 
 }
 
 

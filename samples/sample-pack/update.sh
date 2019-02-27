@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 app=sample
+icon=sample.ico
+
 os=`uname`
 if [ "${os}" == "Darwin" ]; then
 os="mac"
@@ -11,12 +13,42 @@ fi
 usage() {
     echo
     echo "usage:"
-    echo "update.sh -server <server> -port <port> [-install] [-wait] [-h]"
+    echo "update.sh -server <server> -port <port> [<additionalLauncherArguments>] [-install] [-wait] [-h]"
     exit 0;
+}
+
+zenity_msg () {
+	which zenity > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		zenity --$1 --text "$2"
+	fi
+}
+
+fail_and_exit () {
+	# args $1 failure message
+	echo "$1"
+	zenity_msg "error" "$1"
+	exit 1
 }
 
 wait="false"
 install="false"
+
+function quote() {
+   arr=("$@")
+   q=""
+   for i in "${arr[@]}";
+      do
+          if [ "${q}" == "" ]; then
+              q="\"$i\""
+	  else
+              q="${q} \"$i\""
+	  fi
+     done
+   echo $q
+}
+
+declare -a launcherArguments
 
 until [ -z "$1" ]; do
   case $1 in
@@ -48,8 +80,12 @@ until [ -z "$1" ]; do
 	  shift
 	  wait="true"
       ;;
+      *)
+	  launcherArguments+=$1;
+	  shift
   esac
 done    
+
 if [ "$server" == "" ]; then
     echo -n "server: "
     read server
@@ -61,24 +97,28 @@ fi
 
 
 Dest="${HOME}/${app}-runtime"
+
 ScriptDir=$(readlink -f "$0")
+ScriptName=$(basename "${ScriptDir}")
 ScriptDir=$(dirname "${ScriptDir}") 
 
 Update() {
-BaseUrl="http://${server}:${port}/${app}/bootstrap/${os}"
+BaseUrl="http://${server}:${port}/${app}/update/bootstrap/${os}"
+BusinessBaseUri="http://${server}:${port}/${app}/update/business/${os}"
 
 echo "BaseUrl=${BaseUrl}"
+echo "BusinessBaseUri=${BusinessBaseUri}"
 
 cd "${ScriptDir}"
 
 output="${ScriptDir}/update.sha256"
 
 url="${BaseUrl}/update.sha256"
-curl -s $url -o "${output}"
+curl -f -s $url -o "${output}"
 if [ $? -ne 0 ]; then
-    echo "error downloading ${url}"
-    exit -1
+    fail_and_exit "error downloading ${url}"
 fi
+
 sha=`cat update.sha256`
 mustUpdate="true" 
 
@@ -102,31 +142,36 @@ if [ ${mustUpdate} == "true" ]; then
     url="${BaseUrl}/update.zip"
     output2="${ScriptDir}/update.zip"
     echo "downloading ${url}"
-    curl -s $url -o "${output2}"
+    curl -f -s $url -o "${output2}"
      if [ $? -ne 0 ]; then
-	 echo "error downloading ${url}"
-	 exit -1
+	 fail_and_exit "error downloading ${url}"
      fi
      sha2=`sha256sum "${output2}" | awk '{print $1}'`
     if [ "${sha}" != "${sha2}" ]; then
-	echo "hash values differ";
-	echo "expected: $sha";
-	echo "     got: $sha2";
-	exit -1
+	rm -f ${output2}
+	rm -f ${output}
+	fail_and_exit "hash values differ\nexpected: $sha\n     got: $sha2";
     else
 	echo "SHA Hash Values matches: $sha"; 
     fi
 
     rm -rf "${Dest}"
     unzip -q "${output2}" -d "${Dest}"
+
     if [ $? -ne 0 ]; then
-	echo "error unzipping ${output2}"
-	exit -1
+	rm -f ${output2}
+	rm -f ${output}
+	fail_and_exit "error unzipping ${output2}"
     fi
+
     cp "${output}" "${Check}"
+
+    rm -f ${output2}
+    rm -f ${output}
 
 else
     echo "No Runtime Update required"
+    rm -f ${output}
 fi
 
 
@@ -134,19 +179,20 @@ fi
 
 Launch() {
     cd $Dest
-    bin/java --module-path app/jar_auto -splash:conf/splash.gif net.agilhard.jpacktool.util.update4j.JPacktoolBootstrap  $*
+    bin/java -Xmx756m --module-path app/jar_auto -splash:conf/splash.gif net.agilhard.jpacktool.util.update4j.JPacktoolBootstrap -uri:${BusinessBaseUri} ${launcherArguments}
 }
 
 Install() {
     if [ "${os}" == "mac" ]; then
-         echo "Install not implemented for Mac"
-         exit -1
+         fail_and_exit "Install not implemented for Mac"
     fi
+    q=$(quote ${launcherArguments})
+
     cat <<EOF >"${HOME}/Desktop/${app}.desktop"
 [Desktop Entry]
-    Exec=${ScriptDir}/update.sh -server "$server" -port "${port}"
+    Exec="${ScriptDir}/${ScriptName}" -server "$server" -port "${port}" ${q}
     Encoding=UTF-8
-    Icon=${ScriptDir}/icon.ico
+    Icon=${ScriptDir}/${icon}
     Name=${app}
     Path=${ScriptDir}
     Type=Application
