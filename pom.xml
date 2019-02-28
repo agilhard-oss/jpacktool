@@ -12,7 +12,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <version.orgUpdate4j.update4j>1.4.1-SNAPSHOT</version.orgUpdate4j.update4j>
+    <version.orgUpdate4j.update4j>1.4.1</version.orgUpdate4j.update4j>
     <version.netAgiljardMavenPlugins.JlinkJpackagerMavenPlugin>1.0.0-SNAPSHOT</version.netAgiljardMavenPlugins.JlinkJpackagerMavenPlugin>
   </properties>
 
