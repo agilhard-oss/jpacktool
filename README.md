@@ -35,6 +35,6 @@
 
   Have a look at [jpacktool-maven-plugin/README.md](./jpacktool-maven-plugin/README.md)
   or the [JPacktool Maven Plugin Documentation](https://agilhard-oss.github.io/jpacktool-maven-plugin/site/index.html)
- for more information.
+  for more information.
 
 
