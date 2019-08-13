@@ -31,7 +31,7 @@ Based on Apache [maven-jlink-plugin](https://github.com/apache/maven-jlink-plugi
 ## Introduction
 
   The JPacktool Maven plugin is intended to create [Modular Run-Time Images](http://openjdk.java.net/jeps/220) with **JDK 9**
-  and above or native installable packages via [jpackage](http://openjdk.java.net/jeps/343) with **JDK 12** and above.
+  and above or native installable packages via [jpackage](http://openjdk.java.net/jeps/343) with **JDK 14** and above.
     
   The [JPacktool Maven Plugin](./jpacktool-maven-plugin) extends the Agilhard-OSS 
   [JLink-JPackager Maven plugin](https://github.com/agilhard-oss/jlink-jpackager-maven-plugin)
@@ -71,7 +71,7 @@ General usage and
 - [Maven](https://maven.apache.org/)
 
 
-You need to use the special JDK-12 or above Early Access build that includes
+You need to use the special JDK-14 or above Early Access build that includes
 JPackager support to use the plugin with the jpackage(r) Java tool
 as long as the jpackage(r) tool is not officially part of the JDK.
 
