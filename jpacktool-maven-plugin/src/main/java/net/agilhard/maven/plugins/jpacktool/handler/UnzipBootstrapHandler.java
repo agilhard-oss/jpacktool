@@ -22,7 +22,6 @@ package net.agilhard.maven.plugins.jpacktool.handler;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,50 +42,51 @@ public class UnzipBootstrapHandler extends AbstractEndVisitDependencyHandler {
 
 	protected boolean bootstrapFound;
 
-	protected File outputDirectoryJPacktool;
-
 	protected List<File> fileList;
 
 	protected boolean collect;
 
-	public UnzipBootstrapHandler(AbstractToolMojo mojo, DependencyGraphBuilder dependencyGraphBuilder,
-			File outputDirectoryJPacktool, boolean collect) throws MojoExecutionException {
+	public UnzipBootstrapHandler(final AbstractToolMojo mojo, final DependencyGraphBuilder dependencyGraphBuilder,
+			final File outputDirectoryJPacktool, final boolean collect) throws MojoExecutionException {
 
 		super(mojo, dependencyGraphBuilder);
 		this.outputDirectoryJPacktool = outputDirectoryJPacktool;
 		this.collect = collect;
-		fileList = new ArrayList<File>();
+		this.fileList = new ArrayList<File>();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		getLog().info("import-jdeps");
+		this.getLog().info("import-jdeps");
 		super.execute();
 	}
 
-	protected void handleModJar(final DependencyNode dependencyNode, final Artifact artifact,
-			Map.Entry<File, JavaModuleDescriptor> entry) throws MojoExecutionException, MojoFailureException {
+	@Override
+    protected void handleModJar(final DependencyNode dependencyNode, final Artifact artifact,
+			final Map.Entry<File, JavaModuleDescriptor> entry) throws MojoExecutionException, MojoFailureException {
 
 	}
 
-	protected void handleNonModJar(final DependencyNode dependencyNode, final Artifact artifact,
-			Map.Entry<File, JavaModuleDescriptor> entry) throws MojoExecutionException, MojoFailureException {
+	@Override
+    protected void handleNonModJar(final DependencyNode dependencyNode, final Artifact artifact,
+			final Map.Entry<File, JavaModuleDescriptor> entry) throws MojoExecutionException, MojoFailureException {
 
 	}
 
-	protected void handleOther(final DependencyNode dependencyNode)
+	@Override
+    protected void handleOther(final DependencyNode dependencyNode)
 			throws MojoExecutionException, MojoFailureException {
-		getLog().debug("handleOther " + dependencyNode.toNodeString());
+		this.getLog().debug("handleOther " + dependencyNode.toNodeString());
 
-		Artifact artifact = dependencyNode.getArtifact();
-		String type = artifact.getType();
+		final Artifact artifact = dependencyNode.getArtifact();
+		final String type = artifact.getType();
 
 		if (("zip".equals(type)) && (artifact.getClassifier() != null)
 				&& ("jpacktool_bootstrap".equals(artifact.getClassifier()))) {
 
-			setBootstrapFound(true);
-			handleBootstrap(dependencyNode);
+			this.setBootstrapFound(true);
+			this.handleBootstrap(dependencyNode);
 
 		}
 	}
@@ -95,32 +95,32 @@ public class UnzipBootstrapHandler extends AbstractEndVisitDependencyHandler {
 			throws MojoExecutionException, MojoFailureException {
 
 		try {
-			if (collect) {
-				fileList.addAll(UnzipUtility.collect(dependencyNode.getArtifact().getFile(), outputDirectoryJPacktool));
+			if (this.collect) {
+				this.fileList.addAll(UnzipUtility.collect(dependencyNode.getArtifact().getFile(), this.outputDirectoryJPacktool));
 			} else {
-				UnzipUtility.unzip(dependencyNode.getArtifact().getFile(), outputDirectoryJPacktool);
+				UnzipUtility.unzip(dependencyNode.getArtifact().getFile(), this.outputDirectoryJPacktool);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new MojoFailureException("i/o error:", e);
 		}
 	}
 
-	protected void executeCommand(final Commandline cmd, OutputStream outputStream) throws MojoExecutionException {
+	protected void executeCommand(final Commandline cmd, final OutputStream outputStream) throws MojoExecutionException {
 		ExecuteCommand.executeCommand(false, this.getLog(), cmd, outputStream);
 	}
 
 	public boolean isBootstrapFound() {
-		return bootstrapFound;
+		return this.bootstrapFound;
 	}
 
-	public void setBootstrapFound(boolean bootstrapFound) {
+	public void setBootstrapFound(final boolean bootstrapFound) {
 		this.bootstrapFound = bootstrapFound;
 	}
 
 	public void deleteFiles() throws MojoExecutionException {
-		for (File f : fileList) {
+		for (final File f : this.fileList) {
 			if (f.isFile()) {
-				getLog().debug("delete file "+f.getAbsolutePath());
+				this.getLog().debug("delete file "+f.getAbsolutePath());
 				f.delete();
 			}
 		}
