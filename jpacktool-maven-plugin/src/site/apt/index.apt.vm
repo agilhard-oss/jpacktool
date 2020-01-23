@@ -41,7 +41,7 @@ ${project.name}
 
 * Goals Overview
 
-  The JPacktool Maven Plugin has eight goals:
+  The JPacktool Maven Plugin has nine goals:
 
   * {{{./help-mojo.html}jpacktool:help}} displays help information on maven-jlink-plugin.
 
@@ -51,7 +51,9 @@ ${project.name}
 
   * {{{./jpacktool-prepare-mojo.html"}jpacktool:jpacktool-prepare}} Prepare execution of the jlink and jpackager goals by analyzing java module dependencies and copying files from maven dependecies.
 
-  * {{{./jpacktool-generate-pom-mojo.html}jpacktool:jpacktool-generate-pom}} Generate pom for packaging a project using a Bootstrap and a Business Application.
+  * {{{./jpacktool-generate-jlink-mojo.html}jpacktool:jpacktool-generate-jlink}} Generate pom for packaging a project using a Bootstrap and a Business Application and use JLink as the final step.
+
+  * {{{./jpacktool-generate-jpackage-mojo.html}jpacktool:jpacktool-generate-jpackage}} Generate pom for packaging a project using a Bootstrap and a Business Application and use JPackage as the final step - not yet implemented.
 
   * {{{jpacktool-invoke-pom-mojo.html}jpacktool:jpacktool-invoke-pom}} Invoke clean install on generated pom.
 

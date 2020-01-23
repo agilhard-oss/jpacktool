@@ -75,8 +75,8 @@ You need to use the special JDK-14 or above Early Access build that includes
 JPackager support to use the plugin with the jpackage(r) Java tool
 as long as the jpackage(r) tool is not officially part of the JDK.
 
-This JPackager JDK-?? Early Access build can be downloaded from 
-[https://jdk.java.net/jpackage/](https://jdk.java.net/jpackage/)
+This JPackager JDK-14 Early Access build can be downloaded from 
+[http://jdk.java.net/14/](http://jdk.java.net/14/)
 
 Alternatively you can also use the JDK-11 backported JPackager tool wich is mentioned in
 [Filling the Packager gap - OpenJDK mailing list - Java.net](http://mail.openjdk.java.net/pipermail/openjfx-dev/2018-September/022500.html)
